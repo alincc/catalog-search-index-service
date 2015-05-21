@@ -92,6 +92,7 @@
     </dependencies>
 
     <build>
+        <finalName>catalog-search-index-rest-rest</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
