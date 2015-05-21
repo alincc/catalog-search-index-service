@@ -1,0 +1,26 @@
+info:
+    app:
+      name: catalog-search-index-service
+      description: Catalog Search Index Service
+    build:
+        artifact: ${project.artifactId}
+        name: ${project.name}
+        description: ${project.description}
+        version: ${project.version}
+
+server:
+    port: 8200
+
+endpoints:
+    restart:
+      enabled: true
+    refresh:
+      enabled: true
+
+---
+spring:
+    profiles: docker
+  
+server:
+    port: 8080
+  
