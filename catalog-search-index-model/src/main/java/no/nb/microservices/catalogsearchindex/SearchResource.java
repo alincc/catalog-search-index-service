@@ -30,4 +30,7 @@ public class SearchResource extends ResourceSupport {
         return wrapper;
     }
 
+    public void setEmbedded(EmbeddedWrapper wrapper) {
+        this.wrapper = wrapper;
+    }
 }
