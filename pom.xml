@@ -14,10 +14,15 @@
     </parent>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>1.8</java.version>
     </properties>
-    
+
+    <scm>
+        <url>https://github.com/NationalLibraryOfNorway/catalog-search-index-service.git</url>
+        <connection>scm:git:git://github.com/NationalLibraryOfNorway/catalog-search-index-service.git</connection>
+        <developerConnection>scm:git:git@github.com:NationalLibraryOfNorway/catalog-search-index-service.git</developerConnection>
+    </scm>
+
     <organization>
         <name>National Library of Norway</name>
         <url>http://www.nb.no</url>
@@ -35,5 +40,30 @@
         <module>catalog-search-index-rest</module>
         <module>catalog-search-index-model</module>
     </modules>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>NB Snapshot Repository</name>
+            <url>http://utvikling.nb.no:8091/artifactory/libs-snapshots-local</url>
+        </snapshotRepository>
+        <repository>
+            <id>releases</id>
+            <name>NB Release Repository</name>
+            <url>http://utvikling.nb.no:8091/artifactory/libs-releases-local</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <releases />
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>releases</id>
+            <name>Release versjoner av NB software</name>
+            <url>http://utvikling.nb.no:8091/artifactory/libs-releases-local</url>
+        </repository>
+    </repositories>
 
 </project>
