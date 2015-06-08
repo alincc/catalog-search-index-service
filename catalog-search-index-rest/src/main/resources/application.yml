@@ -17,6 +17,12 @@ endpoints:
     refresh:
       enabled: true
 
+spring:
+  data:
+      elasticsearch:
+        cluster-name: elasticsearch
+        cluster-nodes: localhost:9300   
+
 ---
 spring:
     profiles: docker

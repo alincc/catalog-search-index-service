@@ -19,6 +19,7 @@ public class SecurityConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/**")
                 .and()
                 .authorizeRequests()
-                .anyRequest().authenticated();
+                .anyRequest()
+                .authenticated();
     }
 }

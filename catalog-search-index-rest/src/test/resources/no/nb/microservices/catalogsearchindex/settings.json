@@ -1,0 +1,88 @@
+{
+    "analysis" : {
+        "analyzer" : {
+            "default" : {
+                "type" : "standard",
+                "stopwords" : ["på_grunn_av_bug_kan_ikke_listen_være_tom"]
+            },
+            "collation" : {
+                "tokenizer" : "keyword",
+                "filter" : ["norwegianCollator"]
+            },
+            "freetext_index" : {
+                "type": "custom",
+                "tokenizer":"whitespace",
+                "filter":["freetexttokenfilter","freetext_worddelimiter_index_filter","lowercase","stopfilter"]
+            },
+            "freetext_search" : {
+                "type": "custom",
+                "tokenizer":"whitespace",
+                "filter":["freetext_worddelimiter_search_filter","lowercase","stopfilter"]
+            },
+            "dedup" : {
+                "tokenizer" : "keyword",
+                "filter" : ["remove_spesial_chars","remove_extra_space","folding","lowercase"]
+            },
+            "numeric_id" : {
+                "tokenizer" : "keyword",
+                "filter" : ["numeric_filter"]
+            }
+        },
+        "filter" : {
+            "norwegianCollator" : {
+                "type" : "icu_collation",
+                "language" : "no"
+            },
+            "freetexttokenfilter": {
+                "type":"no.nb.oletobias.elasticsearch.index.analysis.FreetextTokenFilterFactory"
+            },
+            "stopfilter": {
+                "type": "stop",
+                "stopwords": ["på_grunn_av_bug_kan_ikke_listen_være_tom"]
+            },            
+            "freetext_worddelimiter_index_filter":{
+                "type":"word_delimiter",
+                "generate_word_parts":"1",
+                "generate_number_parts":"0",
+                "catenate_words":"1",
+                "catenate_numbers":"0",
+                "catenate_all":"0",
+                "preserve_original":"1",
+                "split_on_case_change":"0",
+                "split_on_numerics":"0",
+                "stem_english_possessive":"0"
+            },
+            "freetext_worddelimiter_search_filter":{
+                "type":"word_delimiter",
+                "generate_word_parts":"1",
+                "generate_number_parts":"0",
+                "catenate_words":"0",
+                "catenate_numbers":"0",
+                "catenate_all":"0",
+                "preserve_original":"0",
+                "split_on_case_change":"0",
+                "split_on_numerics":"0",
+                "stem_english_possessive":"0"
+            },
+            "remove_spesial_chars" : {
+                "type" : "pattern_replace",
+                "pattern" : "[\"'()\\[\\.\\-\\?;:,!]",
+                "replacement" : ""
+            },
+            "remove_extra_space" : {
+                "type" : "pattern_replace",
+                "pattern" : "\\s+",
+                "replacement" : " "
+            },
+            "numeric_filter" : {
+                "type" : "pattern_replace",
+                "pattern" : "[^\\d]",
+                "replacement" : ""
+            },
+            "folding" : {
+                "type" : "icu_folding",
+                "unicodeSetFilter" : "[^æøåÆØÅ]"
+            }
+        }
+    }
+}
