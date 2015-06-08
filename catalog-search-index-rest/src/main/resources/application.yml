@@ -23,7 +23,7 @@ spring:
     data:
       elasticsearch:
         cluster-name: elasticsearch
-        cluster-nodes: localhost:9300 
+        cluster-nodes: elasticsearch:9300
   
 server:
     port: 8080
