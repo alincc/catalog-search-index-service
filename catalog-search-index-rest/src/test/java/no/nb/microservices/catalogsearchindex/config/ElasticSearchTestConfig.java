@@ -8,6 +8,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
@@ -15,9 +16,9 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 import org.springframework.data.repository.init.Jackson2RepositoryPopulatorFactoryBean;
 
+@Profile("unit-test")
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "no.nb.microservices.catalogsearchindex.core.repository")
-//@ComponentScan(basePackages = "no.nb.microservices.catalogsearchindex.core.repository")
 public class ElasticSearchTestConfig {
 
 	private final static String config = "no/nb/microservices/catalogsearchindex/";

@@ -10,7 +10,7 @@ public class SearchResource extends ResourceSupport {
 
     @JsonProperty("page")
 	private PageMetadata metadata;
-    @JsonProperty("_embedded")
+    
     private EmbeddedWrapper wrapper = new EmbeddedWrapper(); 
 
     @JsonCreator
@@ -26,6 +26,7 @@ public class SearchResource extends ResourceSupport {
         return metadata;
     }
 
+    @JsonProperty("_embedded")
     public EmbeddedWrapper getEmbedded() {
         return wrapper;
     }
