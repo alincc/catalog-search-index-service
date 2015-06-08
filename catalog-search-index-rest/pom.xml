@@ -113,7 +113,7 @@
     </dependencies>
 
     <build>
-        <finalName>catalog-search-index-rest-rest</finalName>
+        <finalName>catalog-search-index-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
