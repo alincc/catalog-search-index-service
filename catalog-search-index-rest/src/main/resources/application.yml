@@ -17,6 +17,20 @@ endpoints:
     refresh:
       enabled: true
 
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+spring:
+  data:
+    elasticsearch:
+      cluster-name: elasticsearch
+      cluster-nodes: localhost:9300
+
+
 ---
 spring:
     profiles: docker
