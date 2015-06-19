@@ -16,7 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = TestApplication.class)
 @WebIntegrationTest("server.port: 0")
-public class SearchControllerIT {
+public class SearchControllerIntegrationTest {
 
 	@Autowired
 	private WebApplicationContext context;
