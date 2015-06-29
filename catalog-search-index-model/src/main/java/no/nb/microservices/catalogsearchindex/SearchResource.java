@@ -9,14 +9,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SearchResource extends ResourceSupport {
 
     @JsonProperty("page")
-	private PageMetadata metadata;
-    
-    private EmbeddedWrapper wrapper = new EmbeddedWrapper(); 
+    private PageMetadata metadata;
+
+    private EmbeddedWrapper wrapper = new EmbeddedWrapper();
 
     @JsonCreator
     public SearchResource() {
     }
-    
+
     public SearchResource(PageMetadata metadata) {
         super();
         this.metadata = metadata;
