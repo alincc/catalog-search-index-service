@@ -8,6 +8,8 @@ info:
         description: ${project.description}
         version: ${project.version}
 
+
+
 server:
     port: 8200
 
@@ -25,10 +27,12 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
 
 spring:
-  data:
-    elasticsearch:
-      cluster-name: elasticsearch
-      cluster-nodes: localhost:9300
+    application:
+      name: catalog-search-index-service
+    data:
+        elasticsearch:
+            cluster-name: elasticsearch
+            cluster-nodes: localhost:9300
 
 
 ---
@@ -48,4 +52,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://discovery:8761/eureka/
+      
+zipkin:
+    collector-hostname: zipkinCollector
   

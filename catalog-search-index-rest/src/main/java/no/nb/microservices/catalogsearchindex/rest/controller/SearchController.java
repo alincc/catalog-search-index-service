@@ -5,6 +5,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
+import no.nb.htrace.annotations.Traceable;
 import no.nb.microservices.catalogsearchindex.SearchResource;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
@@ -35,6 +36,7 @@ public class SearchController {
 
     @ApiOperation(value = "Search", notes = "Search in NBQL", response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Successful response") })
+    @Traceable(description="search")
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public ResponseEntity<SearchResource> search(
             @RequestParam(value = "q") String query,
