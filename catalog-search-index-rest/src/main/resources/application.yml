@@ -26,6 +26,9 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+zipkin:
+    collector-hostname: localhost
+
 spring:
     application:
       name: catalog-search-index-service
@@ -33,7 +36,6 @@ spring:
         elasticsearch:
             cluster-name: elasticsearch
             cluster-nodes: localhost:9300
-
 
 ---
 spring:
