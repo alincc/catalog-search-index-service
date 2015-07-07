@@ -41,7 +41,7 @@
         <dependency>
             <groupId>no.nb.htrace</groupId>
             <artifactId>htrace-impl-spring</artifactId>
-            <version>0.0.1-8</version>
+            <version>0.0.1-11</version>
         </dependency>
         
         <dependency>
