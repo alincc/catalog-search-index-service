@@ -1,6 +1,6 @@
 package no.nb.microservices.catalogsearchindex;
 
-import no.nb.htrace.annotations.EnableTracing;
+import no.nb.htrace.annotation.EnableTracing;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
