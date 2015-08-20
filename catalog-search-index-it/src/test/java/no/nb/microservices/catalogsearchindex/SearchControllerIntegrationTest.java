@@ -1,5 +1,7 @@
 package no.nb.microservices.catalogsearchindex;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,9 +31,18 @@ public class SearchControllerIntegrationTest {
     }
 	
 	@Test
-	public void testSearch() throws Exception {
+	public void searchWithSearchStringOnly() throws Exception {
 		mockMvc.perform(MockMvcRequestBuilders.get("/search?q=*"))
 			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(jsonPath("$._embedded").exists())
 			.andReturn();
 	}
+	
+	@Test
+    public void searchWithSearchStringAndAggregation() throws Exception {
+	    mockMvc.perform(MockMvcRequestBuilders.get("/search?q=*&aggs=ddc1"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(jsonPath("$._embedded.aggregations[0].name").value("ddc1"))
+            .andReturn();
+    }
 }

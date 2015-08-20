@@ -39,9 +39,10 @@ public class SearchController {
     @Traceable(description="search")
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public ResponseEntity<SearchResource> search(
-            @RequestParam(value = "q") String query,
+            @RequestParam(value = "q") String queryString,
+            @RequestParam(value = "aggs", required = false) String[] aggs,
             @PageableDefault Pageable pageRequest) {
-        SearchAggregated result = searchService.search(query, pageRequest);
+        SearchAggregated result = searchService.search(queryString, aggs, pageRequest);
         SearchResource resource = new SearchResultResourceAssembler()
                 .toResource(result);
         return new ResponseEntity<>(resource, HttpStatus.OK);

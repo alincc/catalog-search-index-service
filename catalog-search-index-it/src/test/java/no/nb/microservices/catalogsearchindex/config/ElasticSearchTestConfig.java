@@ -40,12 +40,9 @@ public class ElasticSearchTestConfig implements DisposableBean{
     public Client esClient() {
             NodeBuilder nodeBuilder = new NodeBuilder();
             nodeBuilder
-                    .local(false)
-            ;
+                    .local(false);
             nodeBuilder.settings()
-                    .put("path.data", "target/es-data")
-//                    .put("http.enabled", true)
-            ;
+                    .put("path.data", "target/es-data");
             this.client = (NodeClient)nodeBuilder.node().client();
             return this.client;
     }
