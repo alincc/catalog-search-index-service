@@ -4,8 +4,10 @@ import org.springframework.hateoas.PagedResources.PageMetadata;
 import org.springframework.hateoas.ResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class SearchResource extends ResourceSupport {
 
     @JsonProperty("page")
