@@ -6,5 +6,5 @@ import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 
 public interface SearchRepository {
     
-    SearchAggregated search(String searchString, String[] aggs, Pageable pageRequest);
+    SearchAggregated search(String searchString, String[] aggregations, Pageable pageRequest);
 }

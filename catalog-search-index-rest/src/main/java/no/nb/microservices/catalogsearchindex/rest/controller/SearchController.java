@@ -40,9 +40,9 @@ public class SearchController {
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public ResponseEntity<SearchResource> search(
             @RequestParam(value = "q") String queryString,
-            @RequestParam(value = "aggs", required = false) String[] aggs,
+            @RequestParam(value = "aggs", required = false) String[] aggregations,
             @PageableDefault Pageable pageRequest) {
-        SearchAggregated result = searchService.search(queryString, aggs, pageRequest);
+        SearchAggregated result = searchService.search(queryString, aggregations, pageRequest);
         SearchResource resource = new SearchResultResourceAssembler()
                 .toResource(result);
         return new ResponseEntity<>(resource, HttpStatus.OK);

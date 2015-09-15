@@ -1,41 +1,69 @@
 package no.nb.microservices.catalogsearchindex.core.repository;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryString;
-
-import org.elasticsearch.index.query.QueryStringQueryBuilder.Operator;
+import no.nb.microservices.catalogsearchindex.core.model.Item;
+import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Repository;
 
-import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class ElasticSearchRepository implements SearchRepository {
 
-    private final ElasticsearchOperations template;
+    private static final String SCHEMA_NAME = "expressionrecords";
+    private static final String TYPE_NAME = "expressionrecord";
+    private final Client client;
 
     @Autowired
-    public ElasticSearchRepository(final ElasticsearchOperations template) {
-        this.template = template;
+    public ElasticSearchRepository(Client client) {
+        this.client = client;
     }
 
     @Override
-    public SearchAggregated search(String searchString, String[] aggregations,
-            Pageable pageRequest) {
-        NativeSearchQueryBuilder searchQueryBuilder = new NativeSearchQueryBuilder()
-                .withQuery(queryString(searchString).defaultOperator(Operator.AND))
-                .withPageable(pageRequest);
-        
+    public SearchAggregated search(String searchString, String[] aggregations, Pageable pageRequest) {
+        SearchRequestBuilder searchRequestBuilder = getSearchRequestBuilder(searchString, aggregations, pageRequest);
+        SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
+        Page<Item> page = extractSearchResult(searchResponse);
+        return new SearchAggregated(page, searchResponse.getAggregations());
+    }
+
+    private Page<Item> extractSearchResult(SearchResponse searchResponse) {
+        List<Item> content = new ArrayList<>();
+        for (SearchHit searchHitFields : searchResponse.getHits()) {
+            content.add(new Item(searchHitFields.getId()));
+        }
+        return new PageImpl<>(content);
+    }
+
+    private SearchRequestBuilder getSearchRequestBuilder(String searchString, String[] aggregations, Pageable pageRequest) {
+        QueryBuilder queryBuilder = QueryBuilders.simpleQueryStringQuery(searchString);
+
+        SearchRequestBuilder searchRequestBuilder = client
+                .prepareSearch(SCHEMA_NAME)
+                .setTypes(TYPE_NAME)
+                .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+                .setQuery(queryBuilder)
+                .setFrom(pageRequest.getPageNumber())
+                .setSize(pageRequest.getPageSize());
+
         if(aggregations != null) {
-            for(String agg : aggregations) {
-                searchQueryBuilder.addAggregation(AggregationBuilders.terms(agg).field(agg));
+            for (String aggregation : aggregations) {
+                searchRequestBuilder.addAggregation(AggregationBuilders.terms(aggregation).field(aggregation));
             }
         }
-
-        return template.query(searchQueryBuilder.build(), new SearchResultsExtractor());
+        return searchRequestBuilder;
     }
 
 }

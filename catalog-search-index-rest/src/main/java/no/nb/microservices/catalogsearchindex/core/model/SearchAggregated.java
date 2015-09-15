@@ -11,7 +11,12 @@ public class SearchAggregated {
     public SearchAggregated(Page<Item> page) {
         this.page = page;
     }
-    
+
+    public SearchAggregated(Page<Item> page, Aggregations aggregations) {
+        this.page = page;
+        this.aggregations = aggregations;
+    }
+
     public Page<Item> getPage() {
         return page;
     }

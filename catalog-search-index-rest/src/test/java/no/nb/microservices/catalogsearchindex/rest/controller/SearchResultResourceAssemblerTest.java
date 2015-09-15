@@ -136,10 +136,8 @@ public class SearchResultResourceAssemblerTest {
         Bucket mockedBucket = mock(Bucket.class);
         when(mockedBucket.getKey()).thenReturn("bucket1");
         when(mockedBucket.getDocCount()).thenReturn(15L);
-        Collection<Bucket> mockedBuckets = Arrays.asList(mockedBucket);
-        when(mockedAggregation.getBuckets()).thenReturn(mockedBuckets);
-        List<Aggregation> mockedAggregaionList = Arrays.asList(mockedAggregation); 
-        when(mockedAggregations.iterator()).thenReturn(mockedAggregaionList.iterator());
+        List<Aggregation> mockedAggregationList = Arrays.asList(mockedAggregation);
+        when(mockedAggregations.iterator()).thenReturn(mockedAggregationList.iterator());
         return mockedAggregations;
     }
     

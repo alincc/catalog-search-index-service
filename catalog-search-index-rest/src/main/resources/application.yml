@@ -32,18 +32,14 @@ zipkin:
 spring:
     application:
       name: catalog-search-index-service
-    data:
-        elasticsearch:
-            cluster-name: elasticsearch
-            cluster-nodes: localhost:9300
+
+catalog:
+  eshosts:
+    - localhost
 
 ---
 spring:
     profiles: docker
-    data:
-      elasticsearch:
-        cluster-name: elasticsearch
-        cluster-nodes: elasticsearch:9300
   
 server:
     port: 8080
@@ -57,4 +53,7 @@ eureka:
       
 zipkin:
     collector-hostname: zipkinCollector
-  
+
+catalog:
+  eshosts:
+    - elasticsearch
