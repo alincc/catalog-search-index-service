@@ -55,5 +55,5 @@ zipkin:
     collector-hostname: zipkinCollector
 
 catalog:
-  eshosts:
+  esHosts:
     - elasticsearch
