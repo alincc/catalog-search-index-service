@@ -34,7 +34,7 @@ spring:
       name: catalog-search-index-service
 
 catalog:
-  eshosts:
+  esHosts:
     - localhost
 
 ---
