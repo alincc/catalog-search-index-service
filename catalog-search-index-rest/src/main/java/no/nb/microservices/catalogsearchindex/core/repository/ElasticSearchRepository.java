@@ -35,16 +35,16 @@ public class ElasticSearchRepository implements SearchRepository {
     public SearchAggregated search(String searchString, String[] aggregations, Pageable pageRequest) {
         SearchRequestBuilder searchRequestBuilder = getSearchRequestBuilder(searchString, aggregations, pageRequest);
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
-        Page<Item> page = extractSearchResult(searchResponse);
+        Page<Item> page = extractSearchResult(searchResponse, pageRequest);
         return new SearchAggregated(page, searchResponse.getAggregations());
     }
 
-    private Page<Item> extractSearchResult(SearchResponse searchResponse) {
+    private Page<Item> extractSearchResult(SearchResponse searchResponse, Pageable pageRequest) {
         List<Item> content = new ArrayList<>();
         for (SearchHit searchHitFields : searchResponse.getHits()) {
             content.add(new Item(searchHitFields.getId()));
         }
-        return new PageImpl<>(content);
+        return new PageImpl<>(content, pageRequest, searchResponse.getHits().getTotalHits());
     }
 
     private SearchRequestBuilder getSearchRequestBuilder(String searchString, String[] aggregations, Pageable pageRequest) {

@@ -8,8 +8,6 @@ info:
         description: ${project.description}
         version: ${project.version}
 
-
-
 server:
     port: 8200
 
