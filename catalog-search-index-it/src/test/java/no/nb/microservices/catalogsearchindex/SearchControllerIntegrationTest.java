@@ -1,5 +1,6 @@
 package no.nb.microservices.catalogsearchindex;
 
+import no.nb.microservices.catalogsearchindex.config.ElasticSearchTestConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +10,12 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {TestApplication.class})
+@SpringApplicationConfiguration(classes = {TestApplication.class, ElasticSearchTestConfig.class})
 @WebIntegrationTest("server.port: 0")
 public class SearchControllerIntegrationTest {
 
@@ -38,4 +41,14 @@ public class SearchControllerIntegrationTest {
         
         assertNotNull(searchResource.getEmbedded().getAggregations());
 	}
+
+	@Test
+	public void searchInFreeTextOnly() {
+        ResponseEntity<SearchResource> entity = new TestRestTemplate().getForEntity(
+                "http://localhost:" + this.port + "/search?q=teater&ft=true&md=false", SearchResource.class);
+
+        SearchResource searchResource = entity.getBody();
+
+        assertThat(searchResource.getEmbedded().getItems(), hasSize(1));
+    }
 }

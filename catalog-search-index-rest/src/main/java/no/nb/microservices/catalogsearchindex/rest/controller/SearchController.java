@@ -41,8 +41,10 @@ public class SearchController {
     public ResponseEntity<SearchResource> search(
             @RequestParam(value = "q") String queryString,
             @RequestParam(value = "aggs", required = false) String[] aggregations,
-            @PageableDefault Pageable pageRequest) {
-        SearchAggregated result = searchService.search(queryString, aggregations, pageRequest);
+            @PageableDefault Pageable pageRequest,
+            @RequestParam(value = "ft", required = false, defaultValue = "true") boolean searchInfreeText,
+            @RequestParam(value = "md", required = false, defaultValue = "true") boolean searchInMetadata) {
+        SearchAggregated result = searchService.search(queryString, aggregations, pageRequest, searchInfreeText, searchInMetadata);
         SearchResource resource = new SearchResultResourceAssembler()
                 .toResource(result);
         return new ResponseEntity<>(resource, HttpStatus.OK);

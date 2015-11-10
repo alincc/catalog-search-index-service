@@ -6,8 +6,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,8 @@ public class ElasticSearchRepository implements SearchRepository {
     }
 
     @Override
-    public SearchAggregated search(String searchString, String[] aggregations, Pageable pageRequest) {
-        SearchRequestBuilder searchRequestBuilder = getSearchRequestBuilder(searchString, aggregations, pageRequest);
+    public SearchAggregated search(String searchString, String[] aggregations, Pageable pageRequest, boolean searchInFreeText, boolean searchInMetadata) {
+        SearchRequestBuilder searchRequestBuilder = getSearchRequestBuilder(searchString, aggregations, pageRequest, searchInFreeText, searchInMetadata);
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
         Page<Item> page = extractSearchResult(searchResponse, pageRequest);
         return new SearchAggregated(page, searchResponse.getAggregations());
@@ -47,16 +46,32 @@ public class ElasticSearchRepository implements SearchRepository {
         return new PageImpl<>(content, pageRequest, searchResponse.getHits().getTotalHits());
     }
 
-    private SearchRequestBuilder getSearchRequestBuilder(String searchString, String[] aggregations, Pageable pageRequest) {
-        QueryBuilder queryBuilder = QueryBuilders.simpleQueryStringQuery(searchString);
-
+    private SearchRequestBuilder getSearchRequestBuilder(String searchString, String[] aggregations, Pageable pageRequest, boolean searchInFreeText, boolean searchInMetadata) {
         SearchRequestBuilder searchRequestBuilder = client
                 .prepareSearch(SCHEMA_NAME)
                 .setTypes(TYPE_NAME)
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                .setQuery(queryBuilder)
                 .setFrom(pageRequest.getPageNumber())
                 .setSize(pageRequest.getPageSize());
+
+
+        QueryStringQueryBuilder query = new QueryStringQueryBuilder(searchString);
+
+        if (searchInFreeText && !searchInMetadata) {
+            query.field("freetext");
+        } else if (!searchInFreeText && searchInMetadata) {
+            query.field("title", 6);
+            query.field("name", 4);
+            query.field("description", 4);
+            query.field("hosttitle");
+            query.field("otherid");
+            query.field("subject");
+            query.field("isbn");
+            query.field("series");
+            query.field("note");
+            query.field("ismn");
+        }
+        searchRequestBuilder.setQuery(query);
 
         if(aggregations != null) {
             for (String aggregation : aggregations) {
@@ -65,5 +80,4 @@ public class ElasticSearchRepository implements SearchRepository {
         }
         return searchRequestBuilder;
     }
-
 }

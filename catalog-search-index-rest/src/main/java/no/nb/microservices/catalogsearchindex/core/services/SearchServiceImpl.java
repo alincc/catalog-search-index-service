@@ -18,8 +18,8 @@ public class SearchServiceImpl implements ISearchService {
     }
 
     @Override
-    public SearchAggregated search(String searchString, String[] aggregations, Pageable pageRequest) {
-        return searchRepository.search(searchString, aggregations, pageRequest);
+    public SearchAggregated search(String searchString, String[] aggregations, Pageable pageRequest, boolean searchInFreeText, boolean searchInMetadata) {
+        return searchRepository.search(searchString, aggregations, pageRequest, searchInFreeText, searchInMetadata);
     }
 
 }
