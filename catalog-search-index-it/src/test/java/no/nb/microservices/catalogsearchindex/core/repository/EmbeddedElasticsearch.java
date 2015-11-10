@@ -119,5 +119,6 @@ public class EmbeddedElasticsearch {
         client.close();
         node.close();
         FileUtils.deleteDirectory(new File(ES_DATA_DIRECTORY));
+        embeddedElasticsearch = null;
     }
 }
