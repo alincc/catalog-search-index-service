@@ -8,6 +8,7 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class ElasticSearchRepository implements SearchRepository {
@@ -40,8 +42,12 @@ public class ElasticSearchRepository implements SearchRepository {
 
     private Page<Item> extractSearchResult(SearchResponse searchResponse, Pageable pageRequest) {
         List<Item> content = new ArrayList<>();
-        for (SearchHit searchHitFields : searchResponse.getHits()) {
-            content.add(new Item(searchHitFields.getId()));
+        for (SearchHit searchHit : searchResponse.getHits()) {
+            Item item = new Item(searchHit.getId());
+            if (searchHit.getFields().containsKey("location")) {
+               item.setLocation(searchHit.getFields().get("location").getValue().toString());
+            }
+            content.add(item);
         }
         return new PageImpl<>(content, pageRequest, searchResponse.getHits().getTotalHits());
     }
@@ -72,6 +78,7 @@ public class ElasticSearchRepository implements SearchRepository {
             query.field("ismn");
         }
         searchRequestBuilder.setQuery(query);
+        searchRequestBuilder.addField("location");
 
         if(aggregations != null) {
             for (String aggregation : aggregations) {
