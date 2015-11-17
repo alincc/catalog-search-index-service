@@ -1,7 +1,12 @@
 package no.nb.microservices.catalogsearchindex.core.repository;
 
+import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
+import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.geo.GeoPoint;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid;
 import org.junit.*;
 import org.springframework.data.domain.PageRequest;
 
@@ -12,14 +17,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-/**
- * Created by alfredw on 9/10/15.
- */
 public class ElasticSearchRepositoryTest {
 
     private Client client;
     private SearchRepository searchRepository;
     private static EmbeddedElasticsearch embeddedElasticsearch;
+    private SearchCriteria searchCriteria;
 
     @BeforeClass
     public static void init() throws IOException {
@@ -30,32 +33,94 @@ public class ElasticSearchRepositoryTest {
     public void setup () {
         client = embeddedElasticsearch.getClient();
         searchRepository = new ElasticSearchRepository(client);
+
+        searchCriteria = new SearchCriteria("-huasui");
+        searchCriteria.setPageRequest(new PageRequest(0, 10));
+        searchCriteria.setSearchInFreeText(true);
+        searchCriteria.setSearchInMetadata(true);
     }
 
     @Test
     public void searchWithQueryString() {
-        SearchAggregated searchAggregated = searchRepository.search("-huasui", new String[]{}, new PageRequest(0, 10), true, true);
+        SearchAggregated searchAggregated = searchRepository.search(searchCriteria);
+
         assertEquals(3, searchAggregated.getPage().getContent().size());
     }
 
     @Test
     public void searchWithAggregations() {
-        SearchAggregated searchAggregated = searchRepository.search("-huasui", new String[]{"mediatype"}, new PageRequest(0, 10), true, true);
-        assertNotNull(searchAggregated.getAggregations());
+        searchCriteria.setAggregations(new String[]{"mediatype"});
+
+        SearchAggregated searchAggregated = searchRepository.search(searchCriteria);
+
+        assertNotNull(searchAggregated.getAggregations().get("mediatype"));
     }
 
     @Test
     public void searchInFreeTextOnly() {
-        SearchAggregated search = searchRepository.search("teater", new String[]{}, new PageRequest(0, 10), true, false);
+        searchCriteria.setSearchString("teater");
+        searchCriteria.setSearchInFreeText(true);
+        searchCriteria.setSearchInMetadata(false);
+
+        SearchAggregated search = searchRepository.search(searchCriteria);
+
         assertThat(search.getPage().getContent(), hasSize(1));
         assertEquals(search.getPage().getContent().get(0).getId(), "0b8501b8e2b822c8ec13558de82aaef9");
     }
 
     @Test
     public void searchInMetadataOnly() {
-        SearchAggregated search = searchRepository.search("2009", new String[]{}, new PageRequest(0, 10), false, true);
+        searchCriteria.setSearchString("2009");
+        searchCriteria.setSearchInFreeText(false);
+        searchCriteria.setSearchInMetadata(true);
+
+        SearchAggregated search = searchRepository.search(searchCriteria);
+
         assertThat(search.getPage().getContent(), hasSize(1));
         assertEquals(search.getPage().getContent().get(0).getId(), "92eb4d381bf7004de77337800654f610");
+    }
+
+    @Test
+    public void geoSearchNoZoom() {
+        searchCriteria.setGeoSearch(new GeoSearch());
+
+        SearchAggregated search = searchRepository.search(searchCriteria);
+
+        assertThatLocationAggregationHasSize(search, 3);
+    }
+
+    @Test
+    public void geoSearchWithZoomOnNordlandAndLowPrecision() {
+        GeoSearch geoSearch = createGeoSearchWithZoomOnNordland(3);
+        searchCriteria.setGeoSearch(geoSearch);
+
+        SearchAggregated search = searchRepository.search(searchCriteria);
+
+        assertThatLocationAggregationHasSize(search, 1);
+    }
+
+    @Test
+    public void geoSearchWithZoomOnNordlandAndHighPrecision() {
+        GeoSearch geoSearch = createGeoSearchWithZoomOnNordland(8);
+        searchCriteria.setGeoSearch(geoSearch);
+
+        SearchAggregated search = searchRepository.search(searchCriteria);
+
+        assertThatLocationAggregationHasSize(search, 2);
+    }
+
+    private GeoSearch createGeoSearchWithZoomOnNordland(int precision) {
+        GeoSearch geoSearch = new GeoSearch();
+        geoSearch.setTopRight(new GeoPoint(68.47, 18.09));
+        geoSearch.setBottomLeft(new GeoPoint(65.14, 10.37));
+        geoSearch.setPrecision(precision);
+        return geoSearch;
+    }
+
+    private void assertThatLocationAggregationHasSize(SearchAggregated search, int numberOfBuckets) {
+        Aggregation locations = search.getAggregations().get("locations");
+        assertNotNull(locations);
+        assertThat(((GeoHashGrid)locations).getBuckets(), hasSize(numberOfBuckets));
     }
 
     @After

@@ -28,5 +28,6 @@
   "titlesort": "Peter Pan for barn ; Peter Pan for vaksne",
   "mediatype": "Bøker",
   "itemCount": "28",
-  "dateissued": "2009"
+  "dateissued": "2009",
+  "location": { "lat": 59.916667, "lon": 10.75}
 }

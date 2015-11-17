@@ -11,8 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {TestApplication.class, ElasticSearchTestConfig.class})
@@ -51,4 +50,16 @@ public class SearchControllerIT {
 
         assertThat(searchResource.getEmbedded().getItems(), hasSize(1));
     }
+
+	@Test
+	public void geoSearch() {
+		ResponseEntity<SearchResource> entity = new TestRestTemplate().getForEntity(
+				"http://localhost:" + this.port + "/search?q=*&topRight=85.0,180.0&bottomLeft=-85.0,-180.0", SearchResource.class);
+
+		SearchResource searchResource = entity.getBody();
+
+        assertThat(searchResource.getEmbedded().getItems(), hasSize(3));
+        assertThat(searchResource.getEmbedded().getAggregations(), hasSize(1));
+        assertEquals("locations", searchResource.getEmbedded().getAggregations().get(0).getName());
+	}
 }

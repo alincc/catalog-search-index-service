@@ -27,5 +27,6 @@
   "mediatype": "Bøker",
   "oaiid": "oai:bibsys.no:biblio:142926132",
   "sesamid": "41a7fb4e94aab9a88be23745a1504a92",
-  "namecreator": "Hagerup, Inger"
+  "namecreator": "Hagerup, Inger",
+  "location": { "lat": 66.444684, "lon": 14.826393}
 }

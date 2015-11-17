@@ -1,7 +1,7 @@
 package no.nb.microservices.catalogsearchindex.core.services;
 
+import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
@@ -18,8 +18,8 @@ public class SearchServiceImpl implements ISearchService {
     }
 
     @Override
-    public SearchAggregated search(String searchString, String[] aggregations, Pageable pageRequest, boolean searchInFreeText, boolean searchInMetadata) {
-        return searchRepository.search(searchString, aggregations, pageRequest, searchInFreeText, searchInMetadata);
+    public SearchAggregated search(SearchCriteria searchCriteria) {
+        return searchRepository.search(searchCriteria);
     }
 
 }

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 
 @Configuration
-public class ElasticSearchTestConfig implements DisposableBean{
+public class ElasticSearchTestConfig implements DisposableBean {
 
     private EmbeddedElasticsearch embeddedElasticsearch;
 

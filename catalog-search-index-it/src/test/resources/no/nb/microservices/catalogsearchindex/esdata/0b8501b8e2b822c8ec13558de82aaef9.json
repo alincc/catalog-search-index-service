@@ -29,5 +29,6 @@
   "dateissued": "2007",
   "otheridsort": "http://urn.nb.no/URN:NBN:no-nb_digibok_2014062707144",
   "freetext_metadata": "",
-  "freetext": "Teater.#325Z3[?u (2009)#3n3I6x?w"
+  "freetext": "Teater.#325Z3[?u (2009)#3n3I6x?w",
+  "location": { "lat": 66.316667, "lon": 14.166667}
 }

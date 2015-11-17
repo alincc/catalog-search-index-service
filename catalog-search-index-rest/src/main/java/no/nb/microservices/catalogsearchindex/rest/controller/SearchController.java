@@ -7,9 +7,12 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 import no.nb.htrace.annotation.Traceable;
 import no.nb.microservices.catalogsearchindex.SearchResource;
+import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
+import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
 
+import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -39,12 +42,33 @@ public class SearchController {
     @Traceable(description="search")
     @RequestMapping(value = "search", method = RequestMethod.GET)
     public ResponseEntity<SearchResource> search(
-            @RequestParam(value = "q") String queryString,
+            @RequestParam(value = "q") String searchString,
             @RequestParam(value = "aggs", required = false) String[] aggregations,
             @PageableDefault Pageable pageRequest,
-            @RequestParam(value = "ft", required = false, defaultValue = "true") boolean searchInfreeText,
-            @RequestParam(value = "md", required = false, defaultValue = "true") boolean searchInMetadata) {
-        SearchAggregated result = searchService.search(queryString, aggregations, pageRequest, searchInfreeText, searchInMetadata);
+            @RequestParam(value = "ft", required = false, defaultValue = "true") boolean searchInFreeText,
+            @RequestParam(value = "md", required = false, defaultValue = "true") boolean searchInMetadata,
+            @RequestParam(value = "topRight", required = false) double[] topRight,
+            @RequestParam(value = "bottomLeft", required = false) double[] bottomLeft,
+            @RequestParam(value = "precision", required = false, defaultValue = "5") int precision) {
+
+        SearchCriteria searchCriteria = new SearchCriteria(searchString);
+        searchCriteria.setAggregations(aggregations);
+        searchCriteria.setPageRequest(pageRequest);
+        searchCriteria.setSearchInFreeText(searchInFreeText);
+        searchCriteria.setSearchInMetadata(searchInMetadata);
+
+        if(topRight != null && bottomLeft != null) {
+            GeoSearch geoSearch = new GeoSearch();
+            if(topRight.length == 2 && bottomLeft.length == 2) {
+                geoSearch.setTopRight(new GeoPoint(topRight[0], topRight[1]));
+                geoSearch.setBottomLeft(new GeoPoint(bottomLeft[0], bottomLeft[1]));
+            }
+            geoSearch.setPrecision(precision);
+            searchCriteria.setGeoSearch(geoSearch);
+        }
+
+        SearchAggregated result = searchService.search(searchCriteria);
+
         SearchResource resource = new SearchResultResourceAssembler()
                 .toResource(result);
         return new ResponseEntity<>(resource, HttpStatus.OK);
