@@ -1,9 +1,14 @@
 package no.nb.microservices.catalogsearchindex.core.repository;
 
-import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import org.springframework.data.domain.Pageable;
+
+import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
+import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 
 public interface SearchRepository {
     
-    SearchAggregated search(String searchString, String[] aggregations, Pageable pageRequest, boolean freeText, boolean metadata);
+    SearchAggregated search(SearchCriteria searchCriteria);
+
+    SearchAggregated searchWithin(String id, String searchString, Pageable pageRequest);
+
 }
