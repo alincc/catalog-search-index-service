@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: no.nb.htrace:htrace-feign-http-interceptors:0.0.1-32">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/no/nb/htrace/htrace-feign-http-interceptors/0.0.1-32/htrace-feign-http-interceptors-0.0.1-32.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/no/nb/htrace/htrace-feign-http-interceptors/0.0.1-32/htrace-feign-http-interceptors-0.0.1-32-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/no/nb/htrace/htrace-feign-http-interceptors/0.0.1-32/htrace-feign-http-interceptors-0.0.1-32-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
