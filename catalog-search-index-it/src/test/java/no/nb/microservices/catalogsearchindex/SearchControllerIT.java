@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {TestApplication.class, ElasticSearchTestConfig.class})
 @WebIntegrationTest("server.port: 0")
-public class SearchControllerIntegrationTest {
+public class SearchControllerIT {
 
 	@Value("${local.server.port}")
 	int port;	
