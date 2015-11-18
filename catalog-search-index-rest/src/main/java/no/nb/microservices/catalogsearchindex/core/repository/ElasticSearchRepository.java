@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
+import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
+import no.nb.microservices.catalogsearchindex.core.model.Item;
+import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
+import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -15,6 +18,9 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
@@ -94,6 +100,7 @@ public class ElasticSearchRepository implements SearchRepository {
             List<String> freetextMetadatas = getFreetextMetadata(searchHit);
             for (String freetextMetadata : freetextMetadatas) {
                 item.addFreetextMetadata(freetextMetadata);
+               item.setLocation(searchHit.getFields().get("location").getValue().toString());
             }
             content.add(item);
         }
@@ -126,7 +133,6 @@ public class ElasticSearchRepository implements SearchRepository {
         Pageable pageRequest = searchCriteria.getPageRequest();
 
         SearchRequestBuilder searchRequestBuilder = createSearchRequestBuilder(pageRequest);
-
 
         QueryStringQueryBuilder query = new QueryStringQueryBuilder(searchCriteria.getSearchString());
 

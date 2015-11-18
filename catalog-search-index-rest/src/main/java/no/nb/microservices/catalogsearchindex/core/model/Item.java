@@ -55,7 +55,6 @@ public class Item {
         }
         this.freetextHits.add(freetextHit);
     }
-    
 
     public String getLocation() {
         return location;

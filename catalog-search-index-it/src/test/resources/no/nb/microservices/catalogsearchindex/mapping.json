@@ -65,7 +65,8 @@
             "freetext_metadata":{"type":"string", "store":"yes", "index":"no"},
             "dra_base":{"type":"string"},
             "channel":{"type":"string"},            
-            "extent":{"type":"integer"}
+            "extent":{"type":"integer"},
+            "location":{"type":"geo_point"}
         }
     }
 }

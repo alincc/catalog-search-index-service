@@ -1,7 +1,9 @@
 package no.nb.microservices.catalogsearchindex;
 
-import no.nb.microservices.catalogsearchindex.config.ElasticSearchTestConfig;
-import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,8 +14,8 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
+import no.nb.microservices.catalogsearchindex.config.ElasticSearchTestConfig;
+import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {TestApplication.class, ElasticSearchTestConfig.class})
