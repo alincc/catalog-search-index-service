@@ -1,9 +1,6 @@
 package no.nb.microservices.catalogsearchindex.core.repository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import no.nb.microservices.catalogsearchindex.NBSearchType;
 import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.Item;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
@@ -13,12 +10,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.text.Text;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
-import org.elasticsearch.index.query.FilteredQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
@@ -29,6 +21,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 public class ElasticSearchRepository implements SearchRepository {
@@ -123,24 +120,7 @@ public class ElasticSearchRepository implements SearchRepository {
 
         SearchRequestBuilder searchRequestBuilder = createSearchRequestBuilder(pageRequest);
 
-        QueryStringQueryBuilder query = new QueryStringQueryBuilder(searchCriteria.getSearchString());
-
-        boolean searchInFreeText = searchCriteria.isSearchInFreeText();
-        boolean searchInMetadata = searchCriteria.isSearchInMetadata();
-        if (searchInFreeText && !searchInMetadata) {
-            query.field("freetext");
-        } else if (!searchInFreeText && searchInMetadata) {
-            query.field("title", 6);
-            query.field("name", 4);
-            query.field("description", 4);
-            query.field("hosttitle");
-            query.field("otherid");
-            query.field("subject");
-            query.field("isbn");
-            query.field("series");
-            query.field("note");
-            query.field("ismn");
-        }
+        QueryStringQueryBuilder query = getQueryStringQueryBuilder(searchCriteria);
 
         FilterBuilder filterBuilder = null;
         GeoSearch geoSearch = searchCriteria.getGeoSearch();
@@ -152,6 +132,7 @@ public class ElasticSearchRepository implements SearchRepository {
                         .bottomLeft(geoSearch.getBottomLeft());
             }
         }
+
         FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(query, filterBuilder);
         searchRequestBuilder.setQuery(filteredQueryBuilder);
         searchRequestBuilder.addField("location");
@@ -173,5 +154,25 @@ public class ElasticSearchRepository implements SearchRepository {
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
                 .setFrom(pageRequest.getPageNumber())
                 .setSize(pageRequest.getPageSize());
+    }
+
+    private QueryStringQueryBuilder getQueryStringQueryBuilder(SearchCriteria searchCriteria) {
+        QueryStringQueryBuilder query = new QueryStringQueryBuilder(searchCriteria.getSearchString());
+
+        if(searchCriteria.getSearchType() == NBSearchType.FIELD_RESTRICTED_SEARCH) {
+            query.field("title", 6);
+            query.field("name", 4);
+            query.field("description", 4);
+            query.field("hosttitle");
+            query.field("otherid");
+            query.field("subject");
+            query.field("isbn");
+            query.field("series");
+            query.field("note");
+            query.field("ismn");
+        } else if(searchCriteria.getSearchType() == NBSearchType.TEXT_SEARCH) {
+            query.field("freetext");
+        }
+        return query;
     }
 }

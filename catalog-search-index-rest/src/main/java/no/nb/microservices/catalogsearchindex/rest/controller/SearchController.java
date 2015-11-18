@@ -17,6 +17,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 import no.nb.htrace.annotation.Traceable;
+import no.nb.microservices.catalogsearchindex.NBSearchType;
 import no.nb.microservices.catalogsearchindex.SearchResource;
 import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
@@ -45,8 +46,7 @@ public class SearchController {
             @RequestParam(value = "q") String searchString,
             @RequestParam(value = "aggs", required = false) String[] aggregations,
             @PageableDefault Pageable pageRequest,
-            @RequestParam(value = "ft", required = false, defaultValue = "true") boolean searchInFreeText,
-            @RequestParam(value = "md", required = false, defaultValue = "true") boolean searchInMetadata,
+            @RequestParam(value = "searchType", required = false, defaultValue = "FULL_TEXT_SEARCH") NBSearchType searchType,
             @RequestParam(value = "topRight", required = false) double[] topRight,
             @RequestParam(value = "bottomLeft", required = false) double[] bottomLeft,
             @RequestParam(value = "precision", required = false, defaultValue = "5") int precision) {
@@ -54,8 +54,7 @@ public class SearchController {
         SearchCriteria searchCriteria = new SearchCriteria(searchString);
         searchCriteria.setAggregations(aggregations);
         searchCriteria.setPageRequest(pageRequest);
-        searchCriteria.setSearchInFreeText(searchInFreeText);
-        searchCriteria.setSearchInMetadata(searchInMetadata);
+        searchCriteria.setSearchType(searchType);
 
         if(topRight != null && bottomLeft != null) {
             GeoSearch geoSearch = new GeoSearch();

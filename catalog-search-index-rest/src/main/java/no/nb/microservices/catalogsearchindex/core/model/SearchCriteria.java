@@ -1,13 +1,14 @@
 package no.nb.microservices.catalogsearchindex.core.model;
 
+import no.nb.microservices.catalogsearchindex.NBSearchType;
 import org.springframework.data.domain.Pageable;
 
 public class SearchCriteria {
+
     private String searchString;
     private String[] aggregations;
     private Pageable pageRequest;
-    private boolean searchInMetadata;
-    private boolean searchInFreeText;
+    private NBSearchType searchType;
     private GeoSearch geoSearch;
 
     public SearchCriteria(String searchString) {
@@ -38,20 +39,12 @@ public class SearchCriteria {
         this.pageRequest = pageRequest;
     }
 
-    public boolean isSearchInMetadata() {
-        return searchInMetadata;
+    public NBSearchType getSearchType() {
+        return searchType;
     }
 
-    public void setSearchInMetadata(boolean searchInMetadata) {
-        this.searchInMetadata = searchInMetadata;
-    }
-
-    public boolean isSearchInFreeText() {
-        return searchInFreeText;
-    }
-
-    public void setSearchInFreeText(boolean searchInFreeText) {
-        this.searchInFreeText = searchInFreeText;
+    public void setSearchType(NBSearchType searchType) {
+        this.searchType = searchType;
     }
 
     public GeoSearch getGeoSearch() {

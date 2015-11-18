@@ -48,7 +48,7 @@ public class SearchControllerIT {
 	@Test
 	public void searchInFreeTextOnly() {
         ResponseEntity<SearchResource> entity = new TestRestTemplate().getForEntity(
-                "http://localhost:" + this.port + "/search?q=teater&ft=true&md=false", SearchResource.class);
+                "http://localhost:" + this.port + "/search?q=teater&searchType=TEXT_SEARCH&md=false", SearchResource.class);
 
         SearchResource searchResource = entity.getBody();
 

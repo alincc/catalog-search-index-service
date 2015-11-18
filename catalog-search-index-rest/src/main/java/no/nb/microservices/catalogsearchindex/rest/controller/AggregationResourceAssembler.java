@@ -24,12 +24,12 @@ public class AggregationResourceAssembler extends ResourceAssemblerSupport<Aggre
         AggregationResource aggregationResource = new AggregationResource(aggregation.getName());
         
         if(aggregation instanceof Terms) {
-            Collection<Bucket> buckets = ((Terms)aggregation).getBuckets();
+            Collection<Bucket> buckets = ((Terms) aggregation).getBuckets();
             List<FacetValueResource> facetValues = new ArrayList<>();
-            for(Terms.Bucket entry : buckets) {
+            for (Terms.Bucket entry : buckets) {
                 facetValues.add(new FacetValueResource(entry.getKey(), entry.getDocCount()));
             }
-            
+
             aggregationResource.setFacetValues(facetValues);
         } else if (aggregation instanceof GeoHashGrid) {
             Collection<GeoHashGrid.Bucket> buckets = ((GeoHashGrid) aggregation).getBuckets();
