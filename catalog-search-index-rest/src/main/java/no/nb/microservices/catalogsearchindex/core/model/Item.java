@@ -10,6 +10,7 @@ public class Item {
     private List<String> freetextMetadatas;
     private List<String> freetextHits;
     private String location;
+    private String pageCount;
 
     public Item() {
     }
@@ -62,5 +63,13 @@ public class Item {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(String pageCount) {
+        this.pageCount = pageCount;
     }
 }
