@@ -1,5 +1,6 @@
 package no.nb.microservices.catalogsearchindex.core.repository;
 
+import no.nb.microservices.catalogsearchindex.NBSearchType;
 import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.Item;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
@@ -158,22 +159,19 @@ public class ElasticSearchRepository implements SearchRepository {
     private QueryStringQueryBuilder getQueryStringQueryBuilder(SearchCriteria searchCriteria) {
         QueryStringQueryBuilder query = new QueryStringQueryBuilder(searchCriteria.getSearchString());
 
-        switch (searchCriteria.getSearchType()) {
-            case FIELD_RESTRICTED_SEARCH:
-                query.field("title", 6);
-                query.field("name", 4);
-                query.field("description", 4);
-                query.field("hosttitle");
-                query.field("otherid");
-                query.field("subject");
-                query.field("isbn");
-                query.field("series");
-                query.field("note");
-                query.field("ismn");
-                break;
-            case TEXT_SEARCH:
-                query.field("freetext");
-                break;
+        if(searchCriteria.getSearchType() == NBSearchType.FIELD_RESTRICTED_SEARCH) {
+            query.field("title", 6);
+            query.field("name", 4);
+            query.field("description", 4);
+            query.field("hosttitle");
+            query.field("otherid");
+            query.field("subject");
+            query.field("isbn");
+            query.field("series");
+            query.field("note");
+            query.field("ismn");
+        } else if(searchCriteria.getSearchType() == NBSearchType.TEXT_SEARCH) {
+            query.field("freetext");
         }
         return query;
     }
