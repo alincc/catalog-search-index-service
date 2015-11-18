@@ -1,5 +1,6 @@
 package no.nb.microservices.catalogsearchindex.core.repository;
 
+import no.nb.microservices.catalogsearchindex.NBSearchType;
 import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
@@ -36,8 +37,7 @@ public class ElasticSearchRepositoryTest {
 
         searchCriteria = new SearchCriteria("-huasui");
         searchCriteria.setPageRequest(new PageRequest(0, 10));
-        searchCriteria.setSearchInFreeText(true);
-        searchCriteria.setSearchInMetadata(true);
+        searchCriteria.setSearchType(NBSearchType.FULL_TEXT_SEARCH);
     }
 
     @Test
@@ -59,8 +59,7 @@ public class ElasticSearchRepositoryTest {
     @Test
     public void searchInFreeTextOnly() {
         searchCriteria.setSearchString("teater");
-        searchCriteria.setSearchInFreeText(true);
-        searchCriteria.setSearchInMetadata(false);
+        searchCriteria.setSearchType(NBSearchType.TEXT_SEARCH);
 
         SearchAggregated search = searchRepository.search(searchCriteria);
 
@@ -71,8 +70,7 @@ public class ElasticSearchRepositoryTest {
     @Test
     public void searchInMetadataOnly() {
         searchCriteria.setSearchString("2009");
-        searchCriteria.setSearchInFreeText(false);
-        searchCriteria.setSearchInMetadata(true);
+        searchCriteria.setSearchType(NBSearchType.FIELD_RESTRICTED_SEARCH);
 
         SearchAggregated search = searchRepository.search(searchCriteria);
 
@@ -120,7 +118,7 @@ public class ElasticSearchRepositoryTest {
     private void assertThatLocationAggregationHasSize(SearchAggregated search, int numberOfBuckets) {
         Aggregation locations = search.getAggregations().get("locations");
         assertNotNull(locations);
-        assertThat(((GeoHashGrid)locations).getBuckets(), hasSize(numberOfBuckets));
+        assertThat(((GeoHashGrid) locations).getBuckets(), hasSize(numberOfBuckets));
     }
 
     @After
