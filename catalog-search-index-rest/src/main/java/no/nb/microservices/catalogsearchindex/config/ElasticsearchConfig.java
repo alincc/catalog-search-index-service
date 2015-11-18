@@ -9,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Created by alfredw on 9/14/15.
- */
 @Configuration
 public class ElasticsearchConfig {
 

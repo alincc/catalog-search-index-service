@@ -18,9 +18,6 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
-import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
@@ -32,11 +29,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-
-import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
-import no.nb.microservices.catalogsearchindex.core.model.Item;
-import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
-import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 
 @Repository
 public class ElasticSearchRepository implements SearchRepository {
@@ -118,11 +110,9 @@ public class ElasticSearchRepository implements SearchRepository {
     private List<String> getFreetextMetadata(SearchHit searchHitFields) {
         ArrayList<String> metadatas = new ArrayList<String>();
         SearchHitField field = searchHitFields.field("freetext_metadata");
-        if (field != null && field.getValue() != null) {
-            if (field.getValue() instanceof String) {
-                for(String metadata : ((String)field.getValue()).split(" ")) {
-                    metadatas.add(metadata);
-                }
+        if (field != null && field.getValue() != null && field.getValue() instanceof String) {
+            for(String metadata : ((String)field.getValue()).split(" ")) {
+                metadatas.add(metadata);
             }
         }
         return metadatas;
@@ -177,12 +167,11 @@ public class ElasticSearchRepository implements SearchRepository {
 
     private SearchRequestBuilder createSearchRequestBuilder(
             Pageable pageRequest) {
-        SearchRequestBuilder searchRequestBuilder = client
+        return client
                 .prepareSearch(SCHEMA_NAME)
                 .setTypes(TYPE_NAME)
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
                 .setFrom(pageRequest.getPageNumber())
                 .setSize(pageRequest.getPageSize());
-        return searchRequestBuilder;
     }
 }
