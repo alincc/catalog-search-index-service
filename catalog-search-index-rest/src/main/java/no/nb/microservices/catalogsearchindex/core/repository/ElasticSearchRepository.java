@@ -100,7 +100,6 @@ public class ElasticSearchRepository implements SearchRepository {
             List<String> freetextMetadatas = getFreetextMetadata(searchHit);
             for (String freetextMetadata : freetextMetadatas) {
                 item.addFreetextMetadata(freetextMetadata);
-               item.setLocation(searchHit.getFields().get("location").getValue().toString());
             }
             content.add(item);
         }
