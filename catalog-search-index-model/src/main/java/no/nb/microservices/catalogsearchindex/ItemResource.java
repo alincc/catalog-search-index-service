@@ -10,6 +10,7 @@ public class ItemResource extends ResourceSupport {
 
     private String itemId;
     private Location location;
+    private int pageCount;
 
     public String getItemId() {
         return itemId;
@@ -25,5 +26,13 @@ public class ItemResource extends ResourceSupport {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public int getPageCount() {
+        return pageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
     }
 }

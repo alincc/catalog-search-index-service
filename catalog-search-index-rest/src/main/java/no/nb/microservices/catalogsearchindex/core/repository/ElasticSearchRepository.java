@@ -81,6 +81,9 @@ public class ElasticSearchRepository implements SearchRepository {
             if (searchHit.getFields().containsKey("location")) {
                 item.setLocation(searchHit.getFields().get("location").getValue().toString());
             }
+            if (searchHit.getFields().containsKey("pageCount")) {
+                item.setPageCount(searchHit.getFields().get("pageCount").getValue().toString());
+            }
             List<Text> fragments = getFreetextHits(searchHit);
             for(Text fragment : fragments) {
                 item.addFreetextFragment(fragment.string());
@@ -136,6 +139,7 @@ public class ElasticSearchRepository implements SearchRepository {
         FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(query, filterBuilder);
         searchRequestBuilder.setQuery(filteredQueryBuilder);
         searchRequestBuilder.addField("location");
+        searchRequestBuilder.addField("pageCount");
         
         String[] aggregations = searchCriteria.getAggregations();
         if(aggregations != null) {

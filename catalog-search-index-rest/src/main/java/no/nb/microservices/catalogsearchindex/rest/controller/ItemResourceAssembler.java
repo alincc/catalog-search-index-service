@@ -23,6 +23,9 @@ public class ItemResourceAssembler extends
             resource.setLocation(new Location(new Double(loc[0]),new Double(loc[1])));
         }
         resource.setItemId(item.getId());
+        if (item.getPageCount() != null) {
+            resource.setPageCount(Integer.parseInt(item.getPageCount()));
+        }
         return resource;
     }
 
