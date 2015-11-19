@@ -10,6 +10,7 @@ public class Item {
     private List<String> freetextMetadatas;
     private List<String> freetextHits;
     private String location;
+    private String firstIndexTime;
     private String pageCount;
 
     public Item() {
@@ -63,6 +64,14 @@ public class Item {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getFirstIndexTime() {
+        return firstIndexTime;
+    }
+
+    public void setFirstIndexTime(String firstIndexTime) {
+        this.firstIndexTime = firstIndexTime;
     }
 
     public String getPageCount() {

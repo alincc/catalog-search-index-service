@@ -18,6 +18,9 @@ public class ItemResourceAssembler extends
     @Override
     public ItemResource toResource(Item item) {
         ItemResource resource = createResourceWithId(item.getId(), item);
+        if (item.getFirstIndexTime() != null) {
+            resource.setFirstIndexTime(item.getFirstIndexTime());
+        }
         if (item.getLocation() != null) {
             String[] loc = item.getLocation().split(",");
             resource.setLocation(new Location(new Double(loc[0]),new Double(loc[1])));

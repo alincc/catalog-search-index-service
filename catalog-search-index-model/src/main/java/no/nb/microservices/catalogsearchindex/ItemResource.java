@@ -10,6 +10,7 @@ public class ItemResource extends ResourceSupport {
 
     private String itemId;
     private Location location;
+    private String firstIndexTime;
     private int pageCount;
 
     public String getItemId() {
@@ -26,6 +27,14 @@ public class ItemResource extends ResourceSupport {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public String getFirstIndexTime() {
+        return firstIndexTime;
+    }
+
+    public void setFirstIndexTime(String firstIndexTime) {
+        this.firstIndexTime = firstIndexTime;
     }
 
     public int getPageCount() {

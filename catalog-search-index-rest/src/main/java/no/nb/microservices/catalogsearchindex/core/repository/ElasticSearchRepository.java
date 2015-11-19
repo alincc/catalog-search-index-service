@@ -78,6 +78,9 @@ public class ElasticSearchRepository implements SearchRepository {
         List<Item> content = new ArrayList<>();
         for (SearchHit searchHit : searchResponse.getHits()) {
             Item item = new Item(searchHit.getId());
+            if (searchHit.getFields().containsKey("firstIndexTime")) {
+                item.setFirstIndexTime(searchHit.getFields().get("firstIndexTime").getValue().toString());
+            }
             if (searchHit.getFields().containsKey("location")) {
                 item.setLocation(searchHit.getFields().get("location").getValue().toString());
             }
@@ -139,8 +142,9 @@ public class ElasticSearchRepository implements SearchRepository {
         FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(query, filterBuilder);
         searchRequestBuilder.setQuery(filteredQueryBuilder);
         searchRequestBuilder.addField("location");
+        searchRequestBuilder.addField("firstIndexTime");
         searchRequestBuilder.addField("pageCount");
-        
+
         String[] aggregations = searchCriteria.getAggregations();
         if(aggregations != null) {
             for (String aggregation : aggregations) {
