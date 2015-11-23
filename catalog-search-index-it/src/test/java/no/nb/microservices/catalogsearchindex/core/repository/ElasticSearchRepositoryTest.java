@@ -14,9 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class ElasticSearchRepositoryTest {
 
@@ -76,6 +74,7 @@ public class ElasticSearchRepositoryTest {
 
         assertThat(search.getPage().getContent(), hasSize(1));
         assertEquals(search.getPage().getContent().get(0).getId(), "92eb4d381bf7004de77337800654f610");
+        assertEquals("2015-06-10T10:17:21.607Z", search.getPage().getContent().get(0).getFirstIndexTime());
     }
 
     @Test

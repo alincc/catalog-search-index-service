@@ -1,7 +1,7 @@
 package no.nb.microservices.catalogsearchindex.rest.controller;
 
-import static org.junit.Assert.assertEquals;
-
+import no.nb.microservices.catalogsearchindex.ItemResource;
+import no.nb.microservices.catalogsearchindex.core.model.Item;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,8 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import no.nb.microservices.catalogsearchindex.ItemResource;
-import no.nb.microservices.catalogsearchindex.core.model.Item;
+import static org.junit.Assert.assertEquals;
 
 public class ItemResourceAssemblerTest {
 
@@ -32,7 +31,9 @@ public class ItemResourceAssemblerTest {
 		ItemResourceAssembler assembler = new ItemResourceAssembler();
 		Item item = new Item();
 		item.setId("Junit");
+        item.setFirstIndexTime("2015-05-05");
 		ItemResource resource = assembler.toResource(item);
 		assertEquals("Junit", resource.getItemId());
+        assertEquals("2015-05-05", resource.getFirstIndexTime());
 	}
 }
