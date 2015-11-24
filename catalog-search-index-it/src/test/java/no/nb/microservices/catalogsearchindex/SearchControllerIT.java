@@ -28,7 +28,7 @@ public class SearchControllerIT {
 	@Test
 	public void testSimpleSearch() throws Exception {
 	    ResponseEntity<SearchResource> entity = new TestRestTemplate().getForEntity(
-                "http://localhost:" + this.port + "/search?q=*", SearchResource.class);
+                "http://localhost:" + this.port + "/v1/search?q=*", SearchResource.class);
 	    
 	    SearchResource searchResource = entity.getBody();
 	    
@@ -38,7 +38,7 @@ public class SearchControllerIT {
 	@Test
     public void searchWithSearchStringAndAggregation() throws Exception {
         ResponseEntity<SearchResource> entity = new TestRestTemplate().getForEntity(
-                "http://localhost:" + this.port + "/search?q=*&aggs=ddc1", SearchResource.class);
+                "http://localhost:" + this.port + "/v1/search?q=*&aggs=ddc1", SearchResource.class);
         
         SearchResource searchResource = entity.getBody();
         
@@ -48,7 +48,7 @@ public class SearchControllerIT {
 	@Test
 	public void searchInFreeTextOnly() {
         ResponseEntity<SearchResource> entity = new TestRestTemplate().getForEntity(
-                "http://localhost:" + this.port + "/search?q=teater&searchType=TEXT_SEARCH&md=false", SearchResource.class);
+                "http://localhost:" + this.port + "/v1/search?q=teater&searchType=TEXT_SEARCH&md=false", SearchResource.class);
 
         SearchResource searchResource = entity.getBody();
 
@@ -58,7 +58,7 @@ public class SearchControllerIT {
 	@Test
 	public void geoSearch() {
 		ResponseEntity<SearchResource> entity = new TestRestTemplate().getForEntity(
-				"http://localhost:" + this.port + "/search?q=*&topRight=85.0,180.0&bottomLeft=-85.0,-180.0", SearchResource.class);
+				"http://localhost:" + this.port + "/v1/search?q=*&topRight=85.0,180.0&bottomLeft=-85.0,-180.0", SearchResource.class);
 
 		SearchResource searchResource = entity.getBody();
 
@@ -70,7 +70,7 @@ public class SearchControllerIT {
 	@Test
     public void testSearchWithin() {
         ResponseEntity<SearchWithinResource> entity = new TestRestTemplate().getForEntity(
-                "http://localhost:" + this.port + "/0b8501b8e2b822c8ec13558de82aaef9/search?q=teater", SearchWithinResource.class);
+                "http://localhost:" + this.port + "/v1/0b8501b8e2b822c8ec13558de82aaef9/search?q=teater", SearchWithinResource.class);
 
         SearchWithinResource searchResource = entity.getBody();
 
