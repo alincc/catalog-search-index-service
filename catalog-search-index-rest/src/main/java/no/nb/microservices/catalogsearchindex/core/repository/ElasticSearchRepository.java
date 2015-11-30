@@ -113,6 +113,9 @@ public class ElasticSearchRepository implements SearchRepository {
                         .map(String::valueOf)
                         .collect(Collectors.toList()));
             }
+            if (searchHit.getFields().containsKey("thumbnailurn")) {
+                item.setThumbnailUrn(searchHit.getFields().get("thumbnailurn").getValue().toString());
+            }
 
             List<Text> fragments = getFreetextHits(searchHit);
             for(Text fragment : fragments) {
@@ -176,6 +179,7 @@ public class ElasticSearchRepository implements SearchRepository {
         searchRequestBuilder.addField("digital");
         searchRequestBuilder.addField("title");
         searchRequestBuilder.addField("mediatype");
+        searchRequestBuilder.addField("thumbnailurn");
 
         String[] aggregations = searchCriteria.getAggregations();
         if(aggregations != null) {

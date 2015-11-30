@@ -34,6 +34,7 @@ public class ItemResourceAssembler extends
         resource.setDigital(item.isDigital());
         resource.setTitle(item.getTitle());
         resource.setMediaTypes(item.getMediaTypes());
+        resource.setThumbnailUrn(item.getThumbnailUrn());
         return resource;
     }
 

@@ -17,6 +17,7 @@ public class Item {
     private boolean isDigital;
     private String title;
     private List<String> mediaTypes;
+    private String thumbnailUrn;
 
     public Item() {
         super();
@@ -138,5 +139,13 @@ public class Item {
 
     public void setMediaTypes(List<String> mediaTypes) {
         this.mediaTypes = mediaTypes;
+    }
+
+    public String getThumbnailUrn() {
+        return thumbnailUrn;
+    }
+
+    public void setThumbnailUrn(String thumbnailUrn) {
+        this.thumbnailUrn = thumbnailUrn;
     }
 }

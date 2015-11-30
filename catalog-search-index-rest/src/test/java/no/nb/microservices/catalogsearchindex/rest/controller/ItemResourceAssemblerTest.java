@@ -39,6 +39,7 @@ public class ItemResourceAssemblerTest {
         item.setDigital(true);
         item.setTitle("Nice Title");
         item.setMediaTypes(Arrays.asList("Bøker", "Musikk"));
+        item.setThumbnailUrn("URN:NBN:no-nb_digimanus_120847_0001");
 		ItemResource resource = assembler.toResource(item);
 		assertEquals("Junit", resource.getItemId());
         assertEquals("2015-05-05", resource.getFirstIndexTime());
@@ -47,5 +48,6 @@ public class ItemResourceAssemblerTest {
         assertEquals("Should be digital", true, resource.isDigital());
         assertEquals("Should hava a title", item.getTitle(), resource.getTitle());
         assertEquals("Should have two media types", 2 ,resource.getMediaTypes().size());
+        assertEquals("Should have thumbnail URN", item.getThumbnailUrn(), resource.getThumbnailUrn());
 	}
 }
