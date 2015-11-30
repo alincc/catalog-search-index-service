@@ -20,6 +20,7 @@ public class ItemResource extends ResourceSupport {
     private List<String> metadataClasses;
     private boolean isDigital;
     private String title;
+    private List<String> mediaTypes;
 
     public String getItemId() {
         return itemId;
@@ -91,6 +92,18 @@ public class ItemResource extends ResourceSupport {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    public List<String> getMediaTypes() {
+        if (mediaTypes == null) {
+            return new ArrayList<>();
+        } else {
+            return mediaTypes;
+        }
+    }
+
+    public void setMediaTypes(List<String> mediaTypes) {
+        this.mediaTypes = mediaTypes;
     }
     
 }

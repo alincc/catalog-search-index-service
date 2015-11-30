@@ -33,6 +33,7 @@ public class ItemResourceAssembler extends
         resource.setMetadataClasses(item.getMetadataClasses());
         resource.setDigital(item.isDigital());
         resource.setTitle(item.getTitle());
+        resource.setMediaTypes(item.getMediaTypes());
         return resource;
     }
 

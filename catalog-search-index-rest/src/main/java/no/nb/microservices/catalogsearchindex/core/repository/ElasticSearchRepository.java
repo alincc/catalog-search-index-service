@@ -107,6 +107,12 @@ public class ElasticSearchRepository implements SearchRepository {
             if (searchHit.getFields().containsKey("title")) {
                 item.setTitle(searchHit.getFields().get("title").getValue().toString());
             }
+            if (searchHit.getFields().containsKey("mediatype")) {
+                item.setMediaTypes(searchHit.getFields().get("mediatype").getValues()
+                        .stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.toList()));
+            }
 
             List<Text> fragments = getFreetextHits(searchHit);
             for(Text fragment : fragments) {
@@ -169,6 +175,7 @@ public class ElasticSearchRepository implements SearchRepository {
         searchRequestBuilder.addField("metadataClasses");
         searchRequestBuilder.addField("digital");
         searchRequestBuilder.addField("title");
+        searchRequestBuilder.addField("mediatype");
 
         String[] aggregations = searchCriteria.getAggregations();
         if(aggregations != null) {

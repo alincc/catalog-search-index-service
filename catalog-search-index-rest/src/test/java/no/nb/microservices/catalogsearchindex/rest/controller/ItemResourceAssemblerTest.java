@@ -38,6 +38,7 @@ public class ItemResourceAssemblerTest {
         item.setMetadataClasses(Arrays.asList("public"));
         item.setDigital(true);
         item.setTitle("Nice Title");
+        item.setMediaTypes(Arrays.asList("Bøker", "Musikk"));
 		ItemResource resource = assembler.toResource(item);
 		assertEquals("Junit", resource.getItemId());
         assertEquals("2015-05-05", resource.getFirstIndexTime());
@@ -45,5 +46,6 @@ public class ItemResourceAssemblerTest {
         assertEquals("Should have one metadataClasses", 1 ,resource.getMetadataClasses().size());
         assertEquals("Should be digital", true, resource.isDigital());
         assertEquals("Should hava a title", item.getTitle(), resource.getTitle());
+        assertEquals("Should have two media types", 2 ,resource.getMediaTypes().size());
 	}
 }
