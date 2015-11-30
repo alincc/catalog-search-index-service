@@ -29,6 +29,10 @@ public class ItemResourceAssembler extends
         if (item.getPageCount() != null) {
             resource.setPageCount(Integer.parseInt(item.getPageCount()));
         }
+        resource.setContentClasses(item.getContentClasses());
+        resource.setMetadataClasses(item.getMetadataClasses());
+        resource.setDigital(item.isDigital());
+        resource.setTitle(item.getTitle());
         return resource;
     }
 

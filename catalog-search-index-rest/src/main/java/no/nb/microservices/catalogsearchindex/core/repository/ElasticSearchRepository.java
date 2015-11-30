@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class ElasticSearchRepository implements SearchRepository {
@@ -87,6 +88,26 @@ public class ElasticSearchRepository implements SearchRepository {
             if (searchHit.getFields().containsKey("pageCount")) {
                 item.setPageCount(searchHit.getFields().get("pageCount").getValue().toString());
             }
+            if (searchHit.getFields().containsKey("contentClasses")) {
+                item.setContentClasses(searchHit.getFields().get("contentClasses").getValues()
+                        .stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.toList()));
+            }
+            if (searchHit.getFields().containsKey("metadataClasses")) {
+                item.setMetadataClasses(searchHit.getFields().get("metadataClasses").getValues()
+                        .stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.toList()));
+            }
+            if (searchHit.getFields().containsKey("digital")) {
+                String digital = searchHit.getFields().get("digital").getValue().toString();
+                item.setDigital(digital.equalsIgnoreCase("ja") ? true : false);
+            }
+            if (searchHit.getFields().containsKey("title")) {
+                item.setTitle(searchHit.getFields().get("title").getValue().toString());
+            }
+
             List<Text> fragments = getFreetextHits(searchHit);
             for(Text fragment : fragments) {
                 item.addFreetextFragment(fragment.string());
@@ -144,6 +165,10 @@ public class ElasticSearchRepository implements SearchRepository {
         searchRequestBuilder.addField("location");
         searchRequestBuilder.addField("firstIndexTime");
         searchRequestBuilder.addField("pageCount");
+        searchRequestBuilder.addField("contentClasses");
+        searchRequestBuilder.addField("metadataClasses");
+        searchRequestBuilder.addField("digital");
+        searchRequestBuilder.addField("title");
 
         String[] aggregations = searchCriteria.getAggregations();
         if(aggregations != null) {

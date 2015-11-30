@@ -12,8 +12,13 @@ public class Item {
     private String location;
     private String firstIndexTime;
     private String pageCount;
+    private List<String> contentClasses;
+    private List<String> metadataClasses;
+    private boolean isDigital;
+    private String title;
 
     public Item() {
+        super();
     }
 
     public Item(String id) {
@@ -80,5 +85,45 @@ public class Item {
 
     public void setPageCount(String pageCount) {
         this.pageCount = pageCount;
+    }
+
+    public List<String> getContentClasses() {
+        if (contentClasses == null) {
+            return new ArrayList<>();
+        } else {
+            return contentClasses;
+        }
+    }
+
+    public void setContentClasses(List<String> contentClasses) {
+        this.contentClasses = contentClasses;
+    }
+
+    public List<String> getMetadataClasses() {
+        if (metadataClasses == null) {
+            return new ArrayList<>();
+        } else {
+            return metadataClasses;
+        }
+    }
+
+    public void setMetadataClasses(List<String> metadataClasses) {
+        this.metadataClasses = metadataClasses;
+    }
+
+    public boolean isDigital() {
+        return isDigital;
+    }
+
+    public void setDigital(boolean isDigital) {
+        this.isDigital = isDigital;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

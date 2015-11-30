@@ -2,6 +2,10 @@ package no.nb.microservices.catalogsearchindex;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.hateoas.ResourceSupport;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -11,7 +15,11 @@ public class ItemResource extends ResourceSupport {
     private String itemId;
     private Location location;
     private String firstIndexTime;
-    private int pageCount;
+    private Integer pageCount;
+    private List<String> contentClasses;
+    private List<String> metadataClasses;
+    private boolean isDigital;
+    private String title;
 
     public String getItemId() {
         return itemId;
@@ -37,11 +45,52 @@ public class ItemResource extends ResourceSupport {
         this.firstIndexTime = firstIndexTime;
     }
 
-    public int getPageCount() {
+    public Integer getPageCount() {
         return pageCount;
     }
 
-    public void setPageCount(int pageCount) {
+    public void setPageCount(Integer pageCount) {
         this.pageCount = pageCount;
     }
+
+    public List<String> getContentClasses() {
+        if (contentClasses == null) {
+            return new ArrayList<>();
+        } else {
+            return contentClasses;
+        }
+    }
+
+    public void setContentClasses(List<String> contentClasses) {
+        this.contentClasses = contentClasses;
+    }
+
+    public List<String> getMetadataClasses() {
+        if (metadataClasses == null) {
+            return new ArrayList<>();
+        } else {
+            return metadataClasses;
+        }
+    }
+
+    public void setMetadataClasses(List<String> metadataClasses) {
+        this.metadataClasses = metadataClasses;
+    }
+
+    public boolean isDigital() {
+        return isDigital;
+    }
+
+    public void setDigital(boolean isDigital) {
+        this.isDigital = isDigital;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
 }
