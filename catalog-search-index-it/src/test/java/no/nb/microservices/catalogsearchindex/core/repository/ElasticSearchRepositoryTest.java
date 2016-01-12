@@ -10,10 +10,12 @@ import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid;
 import org.junit.*;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class ElasticSearchRepositoryTest {
@@ -104,6 +106,28 @@ public class ElasticSearchRepositoryTest {
         SearchAggregated search = searchRepository.search(searchCriteria);
 
         assertThatLocationAggregationHasSize(search, 2);
+    }
+
+    @Test
+    public void sortAscending() {
+        Sort.Order order = new Sort.Order(Sort.Direction.ASC,"title");
+        Sort sort = new Sort(order);
+        PageRequest pageRequest = new PageRequest(0,10, sort);
+        searchCriteria.setPageRequest(pageRequest);
+
+        SearchAggregated search = searchRepository.search(searchCriteria);
+        assertThat(search.getPage().getContent().get(0).getTitle(), is("Nøtteknekkeren"));
+    }
+
+    @Test
+    public void sortDescending() {
+        Sort.Order order = new Sort.Order(Sort.Direction.DESC,"title");
+        Sort sort = new Sort(order);
+        PageRequest pageRequest = new PageRequest(0,10, sort);
+        searchCriteria.setPageRequest(pageRequest);
+
+        SearchAggregated search = searchRepository.search(searchCriteria);
+        assertThat(search.getPage().getContent().get(0).getTitle(), is("Så rart : Inger Hagerup"));
     }
 
     private GeoSearch createGeoSearchWithZoomOnNordland(int precision) {

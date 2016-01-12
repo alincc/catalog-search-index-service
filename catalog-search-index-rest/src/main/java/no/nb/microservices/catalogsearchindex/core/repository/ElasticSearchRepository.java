@@ -16,10 +16,13 @@ import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.highlight.HighlightField;
+import org.elasticsearch.search.sort.FieldSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -187,6 +190,48 @@ public class ElasticSearchRepository implements SearchRepository {
                 searchRequestBuilder.addAggregation(AggregationBuilders.terms(aggregation).field(aggregation));
             }
         }
+
+        // sortering
+        if (searchCriteria.getPageRequest().getSort() != null) {
+            for (Sort.Order order : searchCriteria.getPageRequest().getSort()) {
+                if (order.getProperty().equalsIgnoreCase("date")) {
+                    FieldSortBuilder fieldSortBuilder = new FieldSortBuilder("year");
+                    fieldSortBuilder.missing("_last");
+                    SortOrder sortOrder = SortOrder.ASC;
+                    if (!order.isAscending()) {
+                        sortOrder = SortOrder.DESC;
+                    }
+                    searchRequestBuilder.addSort(fieldSortBuilder);
+
+                    fieldSortBuilder = new FieldSortBuilder("month");
+                    fieldSortBuilder.missing("_last");
+                    fieldSortBuilder.order(sortOrder);
+                    searchRequestBuilder.addSort(fieldSortBuilder);
+
+                    fieldSortBuilder = new FieldSortBuilder("day");
+                    fieldSortBuilder.missing("_last");
+                    fieldSortBuilder.order(sortOrder);
+                    searchRequestBuilder.addSort(fieldSortBuilder);
+                } else {
+                    String sortfield = order.getProperty();
+                    if (order.getProperty().equalsIgnoreCase("title")) {
+                        sortfield = "titlesort";
+                    }
+                    if (sortfield.equalsIgnoreCase("otherid")) {
+                        sortfield = "otheridsort";
+                    }
+
+                    FieldSortBuilder fieldSortBuilder = new FieldSortBuilder(sortfield);
+                    SortOrder sortOrder = SortOrder.ASC;
+                    if (!order.isAscending()) {
+                        sortOrder = SortOrder.DESC;
+                    }
+                    fieldSortBuilder.order(sortOrder);
+                    searchRequestBuilder.addSort(fieldSortBuilder);
+                }
+            }
+        }
+
         return searchRequestBuilder;
     }
 
