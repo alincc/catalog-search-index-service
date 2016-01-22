@@ -28,8 +28,8 @@ import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
 import org.elasticsearch.common.geo.GeoPoint;
 
 @RestController
-@RequestMapping("/v1")
-@Api(value = "/v1", description = "Search index API")
+@RequestMapping("/catalog/v1")
+@Api(value = "/catalog/v1", description = "Search index API")
 public class SearchController {
 
     private final ISearchService searchService;

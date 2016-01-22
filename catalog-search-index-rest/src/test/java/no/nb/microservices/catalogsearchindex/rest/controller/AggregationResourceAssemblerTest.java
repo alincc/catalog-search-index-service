@@ -26,7 +26,7 @@ public class AggregationResourceAssemblerTest {
 
     @Before
     public void init() {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/v1/search?q=Junit&aggs=ddc1");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/catalog/v1/search?q=Junit&aggs=ddc1");
         ServletRequestAttributes attributes = new ServletRequestAttributes(request);
 
         RequestContextHolder.setRequestAttributes(attributes);

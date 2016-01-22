@@ -41,7 +41,7 @@ public class SearchControllerTest {
 
     @Before
     public void init() {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/v1/id/search?q=q");
+        MockHttpServletRequest request = new MockHttpServletRequest("GET", "/catalog/v1/id/search?q=q");
         ServletRequestAttributes attributes = new ServletRequestAttributes(request);
         RequestContextHolder.setRequestAttributes(attributes);
     }
@@ -59,7 +59,7 @@ public class SearchControllerTest {
         ResponseEntity<SearchWithinResource> searchWithin = controller
                 .searchWithin("id", "q", getPageable());
 
-        assertThat("Should hava a self reference", searchWithin.getBody().getId().getHref(), is("http://localhost/v1/id/search?q=q"));
+        assertThat("Should hava a self reference", searchWithin.getBody().getId().getHref(), is("http://localhost/catalog/v1/id/search?q=q"));
         assertThat("Should have fragments", searchWithin.getBody().getFragments().size(), is(2));
         assertThat("Should have freetext metadata", searchWithin.getBody().getFreetextMetadatas().size(), is(1));
     }

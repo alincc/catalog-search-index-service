@@ -17,7 +17,7 @@ public class ItemResourceAssemblerTest {
 
 	@Before
 	public void init() {
-		MockHttpServletRequest request = new MockHttpServletRequest("GET", "/v1/search?q=Junit");
+		MockHttpServletRequest request = new MockHttpServletRequest("GET", "/catalog/v1/search?q=Junit");
         ServletRequestAttributes attributes = new ServletRequestAttributes(request);
 
         RequestContextHolder.setRequestAttributes(attributes);
