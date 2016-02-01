@@ -25,6 +25,9 @@ public class ItemResourceAssembler extends
             String[] loc = item.getLocation().split(",");
             resource.setLocation(new Location(new Double(loc[0]),new Double(loc[1])));
         }
+        if (item.getExplain() != null) {
+            resource.setExplain(item.getExplain());
+        }
         resource.setItemId(item.getId());
         if (item.getPageCount() != null) {
             resource.setPageCount(Integer.parseInt(item.getPageCount()));

@@ -1,6 +1,7 @@
 package no.nb.microservices.catalogsearchindex;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -76,5 +77,15 @@ public class SearchControllerIT {
 
         assertThat("Should have freetext metadada", searchResource.getFreetextMetadatas(), hasSize(1));
         assertThat("Should have fragments",searchResource.getFragments(), hasSize(1));
-    }	
+    }
+
+	@Test
+	public void testSearchWithExplain() {
+		ResponseEntity<SearchResource> entity = new TestRestTemplate().getForEntity(
+				"http://localhost:" + this.port + "/catalog/v1/search?q=0b8501b8e2b822c8ec13558de82aaef9&explain=true", SearchResource.class);
+
+		SearchResource searchResource = entity.getBody();
+
+		assertThat("Items in searchResource should have explain", searchResource.getEmbedded().getItems().get(0).getExplain(), notNullValue());
+	}
 }

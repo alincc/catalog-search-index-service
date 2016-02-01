@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
@@ -115,6 +117,24 @@ public class SearchResultResourceAssemblerTest {
         SearchAggregated searchAggregated = createSearchAggregated(0);
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
         assertEquals(1, searchResultResource.getEmbedded().getAggregations().size());
+    }
+
+    @Test
+    public void whenSearchResultHasExplain() {
+        ArrayList<Item> items = new ArrayList<>();
+        Item id1 = createItem("id1");
+        ObjectMapper mapper = new ObjectMapper();
+        String json = "{}";
+        id1.setExplain(mapper.convertValue(json, JsonNode.class));
+        items.add(id1);
+
+        Page<Item> page = new PageImpl<Item>(items, new PageRequest(0, 10) , 10);
+        SearchAggregated searchAggregated = new SearchAggregated(page);
+
+        searchAggregated.setAggregations(createMockedAggregations());
+        SearchResource searchResource = searchResultResourceAssembler.toResource(searchAggregated);
+        assertNotNull("SearchResource should have explain",searchResource.getEmbedded().getItems().get(0).getExplain());
+
     }
 
     private SearchAggregated createSearchAggregated(int currentPage) {

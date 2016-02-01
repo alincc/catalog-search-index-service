@@ -1,5 +1,7 @@
 package no.nb.microservices.catalogsearchindex.rest.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nb.microservices.catalogsearchindex.ItemResource;
 import no.nb.microservices.catalogsearchindex.core.model.Item;
 import org.junit.After;
@@ -10,6 +12,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 
@@ -40,7 +43,13 @@ public class ItemResourceAssemblerTest {
         item.setTitle("Nice Title");
         item.setMediaTypes(Arrays.asList("Bøker", "Musikk"));
         item.setThumbnailUrn("URN:NBN:no-nb_digimanus_120847_0001");
-		ItemResource resource = assembler.toResource(item);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String json = "{}";
+        JsonNode jsonNode = mapper.convertValue(json, JsonNode.class);
+        item.setExplain(jsonNode);
+
+        ItemResource resource = assembler.toResource(item);
 		assertEquals("Junit", resource.getItemId());
         assertEquals("2015-05-05", resource.getFirstIndexTime());
         assertEquals("Should have two contentClasses", 2 ,resource.getContentClasses().size());
@@ -49,5 +58,6 @@ public class ItemResourceAssemblerTest {
         assertEquals("Should hava a title", item.getTitle(), resource.getTitle());
         assertEquals("Should have two media types", 2 ,resource.getMediaTypes().size());
         assertEquals("Should have thumbnail URN", item.getThumbnailUrn(), resource.getThumbnailUrn());
+        assertNotNull("Should have explain node", resource.getExplain());
 	}
 }

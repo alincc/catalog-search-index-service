@@ -1,5 +1,7 @@
 package no.nb.microservices.catalogsearchindex.core.repository;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import no.nb.microservices.catalogsearchindex.NBSearchType;
 import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.Item;
@@ -80,6 +82,7 @@ public class ElasticSearchRepository implements SearchRepository {
 
     private Page<Item> extractSearchResult(SearchResponse searchResponse, Pageable pageRequest) {
         List<Item> content = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
         for (SearchHit searchHit : searchResponse.getHits()) {
             Item item = new Item(searchHit.getId());
             if (searchHit.getFields().containsKey("firstIndexTime")) {
@@ -128,6 +131,10 @@ public class ElasticSearchRepository implements SearchRepository {
             List<String> freetextMetadatas = getFreetextMetadata(searchHit);
             for (String freetextMetadata : freetextMetadatas) {
                 item.addFreetextMetadata(freetextMetadata);
+            }
+            if (searchHit.getExplanation() != null) {
+                JsonNode jsonNode = mapper.convertValue(searchHit.getExplanation(), JsonNode.class);
+                item.setExplain(jsonNode);
             }
             content.add(item);
         }
@@ -183,6 +190,7 @@ public class ElasticSearchRepository implements SearchRepository {
         searchRequestBuilder.addField("title");
         searchRequestBuilder.addField("mediatype");
         searchRequestBuilder.addField("thumbnailurn");
+        searchRequestBuilder.setExplain(searchCriteria.isExplain());
 
         String[] aggregations = searchCriteria.getAggregations();
         if(aggregations != null) {

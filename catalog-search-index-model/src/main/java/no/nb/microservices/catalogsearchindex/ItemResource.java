@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.hateoas.ResourceSupport;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -22,6 +23,7 @@ public class ItemResource extends ResourceSupport {
     private String title;
     private List<String> mediaTypes;
     private String thumbnailUrn;
+    private JsonNode explain;
 
     public String getItemId() {
         return itemId;
@@ -114,5 +116,12 @@ public class ItemResource extends ResourceSupport {
     public void setThumbnailUrn(String thumbnailUrn) {
         this.thumbnailUrn = thumbnailUrn;
     }
-    
+
+    public JsonNode getExplain() {
+        return explain;
+    }
+
+    public void setExplain(JsonNode explain) {
+        this.explain = explain;
+    }
 }

@@ -1,5 +1,7 @@
 package no.nb.microservices.catalogsearchindex.core.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +20,7 @@ public class Item {
     private String title;
     private List<String> mediaTypes;
     private String thumbnailUrn;
+    private JsonNode explain;
 
     public Item() {
         super();
@@ -147,5 +150,13 @@ public class Item {
 
     public void setThumbnailUrn(String thumbnailUrn) {
         this.thumbnailUrn = thumbnailUrn;
+    }
+
+    public JsonNode getExplain() {
+        return explain;
+    }
+
+    public void setExplain(JsonNode explain) {
+        this.explain = explain;
     }
 }

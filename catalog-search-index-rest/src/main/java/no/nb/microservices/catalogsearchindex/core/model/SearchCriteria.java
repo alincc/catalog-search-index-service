@@ -10,6 +10,7 @@ public class SearchCriteria {
     private Pageable pageRequest;
     private NBSearchType searchType;
     private GeoSearch geoSearch;
+    private boolean explain;
 
     public SearchCriteria(String searchString) {
         this.searchString = searchString;
@@ -53,5 +54,13 @@ public class SearchCriteria {
 
     public void setGeoSearch(GeoSearch geoSearch) {
         this.geoSearch = geoSearch;
+    }
+
+    public boolean isExplain() {
+        return explain;
+    }
+
+    public void setExplain(boolean explain) {
+        this.explain = explain;
     }
 }

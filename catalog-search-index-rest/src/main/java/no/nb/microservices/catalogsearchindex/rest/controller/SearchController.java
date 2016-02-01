@@ -50,12 +50,14 @@ public class SearchController {
             @RequestParam(value = "searchType", required = false, defaultValue = "FULL_TEXT_SEARCH") NBSearchType searchType,
             @RequestParam(value = "topRight", required = false) double[] topRight,
             @RequestParam(value = "bottomLeft", required = false) double[] bottomLeft,
-            @RequestParam(value = "precision", required = false, defaultValue = "5") int precision) {
+            @RequestParam(value = "precision", required = false, defaultValue = "5") int precision,
+            @RequestParam(value = "explain", required = false) boolean explain) {
 
         SearchCriteria searchCriteria = new SearchCriteria(searchString);
         searchCriteria.setAggregations(aggregations);
         searchCriteria.setPageRequest(pageRequest);
         searchCriteria.setSearchType(searchType);
+        searchCriteria.setExplain(explain);
 
         if(topRight != null && bottomLeft != null) {
             GeoSearch geoSearch = new GeoSearch();
