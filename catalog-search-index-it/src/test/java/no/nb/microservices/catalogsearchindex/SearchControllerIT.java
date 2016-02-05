@@ -1,11 +1,7 @@
 package no.nb.microservices.catalogsearchindex;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-
+import no.nb.microservices.catalogsearchindex.config.ElasticSearchTestConfig;
+import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,8 +11,9 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import no.nb.microservices.catalogsearchindex.config.ElasticSearchTestConfig;
-import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {TestApplication.class, ElasticSearchTestConfig.class})
@@ -88,4 +85,19 @@ public class SearchControllerIT {
 
 		assertThat("Items in searchResource should have explain", searchResource.getEmbedded().getItems().get(0).getExplain(), notNullValue());
 	}
+
+    @Test
+    public void testSearchWithFilter() {
+        ResponseEntity<SearchResource> entity1 = new TestRestTemplate().getForEntity(
+                "http://localhost:" + this.port + "/catalog/v1/search?q=*&filter=mediatype:Aviser", SearchResource.class);
+        ResponseEntity<SearchResource> entity2 = new TestRestTemplate().getForEntity(
+                "http://localhost:" + this.port + "/catalog/v1/search?q=*&filter=mediatype:Bøker", SearchResource.class);
+
+        SearchResource searchResource1 = entity1.getBody();
+        SearchResource searchResource2 = entity2.getBody();
+
+        assertTrue("Search 1 should get 0 items", searchResource1.getEmbedded().getItems().size() == 0);
+        assertTrue("Search 1 should get 3 items", searchResource2.getEmbedded().getItems().size() == 3);
+
+    }
 }

@@ -2,6 +2,7 @@ package no.nb.microservices.catalogsearchindex.core.repository;
 
 import no.nb.microservices.catalogsearchindex.NBSearchType;
 import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
+import no.nb.microservices.catalogsearchindex.core.model.Item;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 import org.elasticsearch.client.Client;
@@ -54,6 +55,25 @@ public class ElasticSearchRepositoryTest {
         SearchAggregated searchAggregated = searchRepository.search(searchCriteria);
 
         assertNotNull(searchAggregated.getAggregations().get("mediatype"));
+    }
+
+    @Test
+    public void searchWithFilters() {
+        searchCriteria.setFilters(new String[]{"mediatype:Aviser"});
+        SearchAggregated searchAggregated1 = searchRepository.search(searchCriteria);
+
+        searchCriteria.setFilters(new String[]{"mediatype:Bøker"});
+        SearchAggregated searchAggregated2 = searchRepository.search(searchCriteria);
+
+        searchCriteria.setFilters(new String[]{"mediatype:Bøker", "mediatype:Aviser"});
+        SearchAggregated searchAggregated3 = searchRepository.search(searchCriteria);
+
+        assertEquals("Search 1 should get hits on 0 items", 0, searchAggregated1.getPage().getContent().size());
+        assertEquals("Search 2 should get hits on 3 items", 3, searchAggregated2.getPage().getContent().size());
+        for (Item item : searchAggregated2.getPage().getContent()) {
+            assertTrue("Each item should have mediatype \"Bøker\"", item.getMediaTypes().get(0).equalsIgnoreCase("Bøker"));
+        }
+        assertEquals("Search 3 should get hits on 0 items", 0, searchAggregated3.getPage().getContent().size());
     }
 
     @Test

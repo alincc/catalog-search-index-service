@@ -1,21 +1,9 @@
 package no.nb.microservices.catalogsearchindex.rest.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
-
 import no.nb.htrace.annotation.Traceable;
 import no.nb.microservices.catalogsearchindex.NBSearchType;
 import no.nb.microservices.catalogsearchindex.SearchResource;
@@ -24,8 +12,13 @@ import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
 import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
-
 import org.elasticsearch.common.geo.GeoPoint;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/catalog/v1")
@@ -51,13 +44,15 @@ public class SearchController {
             @RequestParam(value = "topRight", required = false) double[] topRight,
             @RequestParam(value = "bottomLeft", required = false) double[] bottomLeft,
             @RequestParam(value = "precision", required = false, defaultValue = "5") int precision,
-            @RequestParam(value = "explain", required = false) boolean explain) {
+            @RequestParam(value = "explain", required = false) boolean explain,
+            @RequestParam(value = "filter", required = false) String[] filters) {
 
         SearchCriteria searchCriteria = new SearchCriteria(searchString);
         searchCriteria.setAggregations(aggregations);
         searchCriteria.setPageRequest(pageRequest);
         searchCriteria.setSearchType(searchType);
         searchCriteria.setExplain(explain);
+        searchCriteria.setFilters(filters);
 
         if(topRight != null && bottomLeft != null) {
             GeoSearch geoSearch = new GeoSearch();

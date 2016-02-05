@@ -27,10 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -163,20 +160,35 @@ public class ElasticSearchRepository implements SearchRepository {
 
     private SearchRequestBuilder getSearchRequestBuilder(SearchCriteria searchCriteria) {
         Pageable pageRequest = searchCriteria.getPageRequest();
+        List<FilterBuilder> filters = new LinkedList<>();
+        BoolFilterBuilder filterBuilder = null;
 
         SearchRequestBuilder searchRequestBuilder = createSearchRequestBuilder(pageRequest);
 
         QueryStringQueryBuilder query = getQueryStringQueryBuilder(searchCriteria);
 
-        FilterBuilder filterBuilder = null;
+        GeoBoundingBoxFilterBuilder geoBoundingBoxFilterBuilder = null;
         GeoSearch geoSearch = searchCriteria.getGeoSearch();
         if(geoSearch != null) {
             searchRequestBuilder.addAggregation(AggregationBuilders.geohashGrid("locations").field("location").precision(geoSearch.getPrecision()));
             if(geoSearch.getTopRight() != null && geoSearch.getBottomLeft() != null) {
-                filterBuilder = FilterBuilders.geoBoundingBoxFilter("location")
+                geoBoundingBoxFilterBuilder = FilterBuilders.geoBoundingBoxFilter("location")
                         .topRight(geoSearch.getTopRight())
                         .bottomLeft(geoSearch.getBottomLeft());
+
+                filters.add(geoBoundingBoxFilterBuilder);
             }
+        }
+
+        if (searchCriteria.getFilters() != null && searchCriteria.getFilters().length > 0) {
+            for (String filter : searchCriteria.getFilters()) {
+                String[] values = filter.split(":");
+                filters.add(FilterBuilders.termFilter(values[0].toLowerCase(), values[1].toLowerCase()));
+            }
+        }
+
+        if (filters.size() > 0) {
+            filterBuilder = FilterBuilders.boolFilter().must(filters.toArray(new FilterBuilder[filters.size()]));
         }
 
         FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(query, filterBuilder);

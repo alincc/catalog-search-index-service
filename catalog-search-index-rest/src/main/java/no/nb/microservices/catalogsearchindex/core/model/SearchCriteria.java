@@ -11,6 +11,7 @@ public class SearchCriteria {
     private NBSearchType searchType;
     private GeoSearch geoSearch;
     private boolean explain;
+    private String[] filters;
 
     public SearchCriteria(String searchString) {
         this.searchString = searchString;
@@ -62,5 +63,13 @@ public class SearchCriteria {
 
     public void setExplain(boolean explain) {
         this.explain = explain;
+    }
+
+    public String[] getFilters() {
+        return filters;
+    }
+
+    public void setFilters(String[] filters) {
+        this.filters = filters;
     }
 }
