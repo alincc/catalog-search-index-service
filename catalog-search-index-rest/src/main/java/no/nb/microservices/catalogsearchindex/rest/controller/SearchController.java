@@ -14,10 +14,12 @@ import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
 import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,6 +33,11 @@ public class SearchController {
     public SearchController(final ISearchService searchService) {
         this.searchService = searchService;
     }
+    
+    @InitBinder
+    public void sortBinderInit(WebDataBinder binder) {
+        binder.registerCustomEditor(String[].class, "boost", new StringArrayPropertyEditor(null));
+    }
 
     @ApiOperation(value = "Search", notes = "Search in NBQL", response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Successful response") })
@@ -40,6 +47,7 @@ public class SearchController {
             @RequestParam(value = "q") String searchString,
             @RequestParam(value = "aggs", required = false) String[] aggregations,
             @PageableDefault Pageable pageRequest,
+            @RequestParam(value = "boost", required = false) String[] boost,
             @RequestParam(value = "searchType", required = false, defaultValue = "FULL_TEXT_SEARCH") NBSearchType searchType,
             @RequestParam(value = "topRight", required = false) double[] topRight,
             @RequestParam(value = "bottomLeft", required = false) double[] bottomLeft,
@@ -53,6 +61,7 @@ public class SearchController {
         searchCriteria.setSearchType(searchType);
         searchCriteria.setExplain(explain);
         searchCriteria.setFilters(filters);
+        searchCriteria.setBoost(boost);
 
         if(topRight != null && bottomLeft != null) {
             GeoSearch geoSearch = new GeoSearch();

@@ -204,14 +204,25 @@ public class ElasticSearchRepository implements SearchRepository {
         searchRequestBuilder.addField("thumbnailurn");
         searchRequestBuilder.setExplain(searchCriteria.isExplain());
 
+        aggregations(searchCriteria, searchRequestBuilder);
+        sort(searchCriteria, searchRequestBuilder);
+        boost(searchCriteria, query);
+
+        return searchRequestBuilder;
+    }
+
+    private void aggregations(SearchCriteria searchCriteria,
+            SearchRequestBuilder searchRequestBuilder) {
         String[] aggregations = searchCriteria.getAggregations();
         if(aggregations != null) {
             for (String aggregation : aggregations) {
                 searchRequestBuilder.addAggregation(AggregationBuilders.terms(aggregation).field(aggregation));
             }
         }
+    }
 
-        // sortering
+    private void sort(SearchCriteria searchCriteria,
+            SearchRequestBuilder searchRequestBuilder) {
         if (searchCriteria.getPageRequest().getSort() != null) {
             for (Sort.Order order : searchCriteria.getPageRequest().getSort()) {
                 if (order.getProperty().equalsIgnoreCase("date")) {
@@ -251,8 +262,14 @@ public class ElasticSearchRepository implements SearchRepository {
                 }
             }
         }
+    }
 
-        return searchRequestBuilder;
+    private void boost(SearchCriteria searchCriteria, QueryStringQueryBuilder query) {
+        
+        searchCriteria.getBoostMap().forEach((k,v) -> {
+            query.field(k, v);
+        });
+        
     }
 
     private SearchRequestBuilder createSearchRequestBuilder(

@@ -17,6 +17,7 @@ import java.io.IOException;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
 
 public class ElasticSearchRepositoryTest {
@@ -148,6 +149,15 @@ public class ElasticSearchRepositoryTest {
 
         SearchAggregated search = searchRepository.search(searchCriteria);
         assertThat(search.getPage().getContent().get(0).getTitle(), is("Så rart : Inger Hagerup"));
+    }
+
+    @Test
+    public void searchWithBoost() {
+        searchCriteria.setBoost(new String[]{"title,10", "name,4"});
+        
+        SearchAggregated search = searchRepository.search(searchCriteria);
+        
+        assertThat(search, notNullValue());
     }
 
     private GeoSearch createGeoSearchWithZoomOnNordland(int precision) {

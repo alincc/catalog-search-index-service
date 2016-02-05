@@ -1,6 +1,11 @@
 package no.nb.microservices.catalogsearchindex.core.model;
 
 import no.nb.microservices.catalogsearchindex.NBSearchType;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Pageable;
 
 public class SearchCriteria {
@@ -12,6 +17,7 @@ public class SearchCriteria {
     private GeoSearch geoSearch;
     private boolean explain;
     private String[] filters;
+    private String[] boost;
 
     public SearchCriteria(String searchString) {
         this.searchString = searchString;
@@ -71,5 +77,27 @@ public class SearchCriteria {
 
     public void setFilters(String[] filters) {
         this.filters = filters;
+    }
+
+    public String[] getBoost() {
+        if (boost == null) {
+            this.boost = new String[0];
+        }
+        return boost;
+    }
+
+    public void setBoost(String[] boost) {
+        this.boost = boost;
+    }
+    
+    public Map<String, Float> getBoostMap() {
+        Map<String, Float> boostMap = new HashMap<>();
+        for(String boost : this.getBoost()) {
+            String[] boostFields = boost.split(",");
+            if (boostFields.length == 2 && NumberUtils.isDigits(boostFields[1])) {
+                boostMap.put(boostFields[0], Float.valueOf(boostFields[1]));
+            }
+        }
+        return boostMap;
     }
 }
