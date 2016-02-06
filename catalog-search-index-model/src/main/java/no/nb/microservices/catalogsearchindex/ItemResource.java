@@ -24,6 +24,7 @@ public class ItemResource extends ResourceSupport {
     private List<String> mediaTypes;
     private String thumbnailUrn;
     private JsonNode explain;
+    private List<String> creators;
 
     public String getItemId() {
         return itemId;
@@ -124,4 +125,16 @@ public class ItemResource extends ResourceSupport {
     public void setExplain(JsonNode explain) {
         this.explain = explain;
     }
+
+	public List<String> getCreators() {
+        if (creators == null) {
+            return new ArrayList<>();
+        } else {
+            return creators;
+        }
+	}
+
+	public void setCreators(List<String> creators) {
+		this.creators = creators;
+	}
 }

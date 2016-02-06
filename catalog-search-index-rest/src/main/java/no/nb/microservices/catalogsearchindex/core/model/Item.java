@@ -21,6 +21,7 @@ public class Item {
     private List<String> mediaTypes;
     private String thumbnailUrn;
     private JsonNode explain;
+    private List<String> creators;
 
     public Item() {
         super();
@@ -159,4 +160,12 @@ public class Item {
     public void setExplain(JsonNode explain) {
         this.explain = explain;
     }
+
+	public List<String> getCreators() {
+		return creators;
+	}
+
+	public void setCreators(List<String> creators) {
+		this.creators = creators;
+	}
 }

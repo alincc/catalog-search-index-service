@@ -38,6 +38,7 @@ public class ItemResourceAssembler extends
         resource.setTitle(item.getTitle());
         resource.setMediaTypes(item.getMediaTypes());
         resource.setThumbnailUrn(item.getThumbnailUrn());
+        resource.setCreators(item.getCreators());
         return resource;
     }
 

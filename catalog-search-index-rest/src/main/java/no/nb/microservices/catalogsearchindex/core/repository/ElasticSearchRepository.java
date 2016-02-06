@@ -119,6 +119,12 @@ public class ElasticSearchRepository implements SearchRepository {
             if (searchHit.getFields().containsKey("thumbnailurn")) {
                 item.setThumbnailUrn(searchHit.getFields().get("thumbnailurn").getValue().toString());
             }
+            if (searchHit.getFields().containsKey("creator")) {
+                item.setCreators(searchHit.getFields().get("creator").getValues()
+                        .stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.toList()));
+            }
 
             List<Text> fragments = getFreetextHits(searchHit);
             for(Text fragment : fragments) {
@@ -202,6 +208,7 @@ public class ElasticSearchRepository implements SearchRepository {
         searchRequestBuilder.addField("title");
         searchRequestBuilder.addField("mediatype");
         searchRequestBuilder.addField("thumbnailurn");
+        searchRequestBuilder.addField("creator");
         searchRequestBuilder.setExplain(searchCriteria.isExplain());
 
         aggregations(searchCriteria, searchRequestBuilder);
