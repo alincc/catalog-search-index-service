@@ -18,6 +18,7 @@ public class SearchCriteria {
     private boolean explain;
     private String[] filters;
     private String[] boost;
+    private boolean grouping;
 
     public SearchCriteria(String searchString) {
         this.searchString = searchString;
@@ -100,4 +101,12 @@ public class SearchCriteria {
         }
         return boostMap;
     }
+
+	public boolean isGrouping() {
+		return grouping;
+	}
+
+	public void setGrouping(boolean grouping) {
+		this.grouping = grouping;
+	}
 }

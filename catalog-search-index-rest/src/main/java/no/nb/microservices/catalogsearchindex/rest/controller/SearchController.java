@@ -53,7 +53,8 @@ public class SearchController {
             @RequestParam(value = "bottomLeft", required = false) double[] bottomLeft,
             @RequestParam(value = "precision", required = false, defaultValue = "5") int precision,
             @RequestParam(value = "explain", required = false) boolean explain,
-            @RequestParam(value = "filter", required = false) String[] filters) {
+            @RequestParam(value = "filter", required = false) String[] filters,
+            @RequestParam(value = "grouping", required = false) boolean grouping) {
 
         SearchCriteria searchCriteria = new SearchCriteria(searchString);
         searchCriteria.setAggregations(aggregations);
@@ -62,6 +63,7 @@ public class SearchController {
         searchCriteria.setExplain(explain);
         searchCriteria.setFilters(filters);
         searchCriteria.setBoost(boost);
+        searchCriteria.setGrouping(grouping);
 
         if(topRight != null && bottomLeft != null) {
             GeoSearch geoSearch = new GeoSearch();

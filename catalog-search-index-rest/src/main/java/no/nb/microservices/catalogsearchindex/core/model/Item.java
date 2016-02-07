@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class Item {
 
     private String id;
@@ -168,4 +171,28 @@ public class Item {
 	public void setCreators(List<String> creators) {
 		this.creators = creators;
 	}
+	
+	@Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 31).
+            append(title).
+            append(creators).
+            append(mediaTypes).
+            toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+       if (!(obj instanceof Item))
+            return false;
+        if (obj == this)
+            return true;
+
+        Item rhs = (Item) obj;
+        return new EqualsBuilder().
+            append(title, rhs.title).
+            append(creators, rhs.creators).
+            append(mediaTypes, rhs.mediaTypes).
+            isEquals();
+    }	
 }
