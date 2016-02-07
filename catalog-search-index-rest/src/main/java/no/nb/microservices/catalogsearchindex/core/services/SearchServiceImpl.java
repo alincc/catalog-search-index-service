@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -74,7 +75,9 @@ public class SearchServiceImpl implements ISearchService {
     		} while(content.size() != pageSize && hasNext);
 
 			Page<Item> page = new PageImpl<>(content, p, result.getPage().getTotalElements());
-    		return new SearchAggregated(page, result.getAggregations());
+			SearchAggregated groupedSearchAggregated = new SearchAggregated(page, result.getAggregations());
+			groupedSearchAggregated.setScrollId(UUID.randomUUID().toString());
+    		return groupedSearchAggregated;
     	} else {
     		return searchRepository.search(searchCriteria);
     	}

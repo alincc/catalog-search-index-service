@@ -7,6 +7,7 @@ public class SearchAggregated {
 
     private Page<Item> page;
     private Aggregations aggregations;
+    private String scrollId;
 
     public SearchAggregated(Page<Item> page) {
         this.page = page;
@@ -28,4 +29,12 @@ public class SearchAggregated {
     public void setAggregations(Aggregations aggregations) {
         this.aggregations = aggregations;
     }
+
+	public String getScrollId() {
+		return scrollId;
+	}
+
+	public void setScrollId(String scrollId) {
+		this.scrollId = scrollId;
+	}
 }

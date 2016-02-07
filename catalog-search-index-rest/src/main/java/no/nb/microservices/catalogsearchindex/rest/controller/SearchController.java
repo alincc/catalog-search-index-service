@@ -12,6 +12,8 @@ import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
 import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
+
+import org.apache.commons.lang3.NotImplementedException;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
@@ -42,7 +44,7 @@ public class SearchController {
     @ApiOperation(value = "Search", notes = "Search in NBQL", response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Successful response") })
     @Traceable(description="search")
-    @RequestMapping(value = "search", method = RequestMethod.GET)
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ResponseEntity<SearchResource> search(
             @RequestParam(value = "q") String searchString,
             @RequestParam(value = "aggs", required = false) String[] aggregations,
@@ -82,7 +84,13 @@ public class SearchController {
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
-    @Traceable(description="searchWithin")
+    @RequestMapping(value = "/search/scroll", method = RequestMethod.GET)
+    public ResponseEntity<SearchResource> search(
+    		@RequestParam(value = "scrollId") String scrollId) {
+    	throw new NotImplementedException("Scroll not implemented");
+    }
+
+    @Traceable(description="/searchWithin")
     @RequestMapping(value = "/{id}/search", method = RequestMethod.GET)
     public ResponseEntity<SearchWithinResource> searchWithin(@PathVariable(value = "id") String id, 
             @RequestParam(value = "q") String q,
