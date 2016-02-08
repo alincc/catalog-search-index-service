@@ -37,6 +37,7 @@ public class SearchResultResourceAssembler implements ResourceAssembler<SearchAg
         PageMetadata metadata = asPageMetadata(result.getPage());
 
         SearchResource resources = new SearchResource(metadata);
+        resources.setScrollId(result.getScrollId());
         for (Item item : result.getPage().getContent()) {
             resources.getEmbedded().getItems().add(assembler.toResource(item));
         }
