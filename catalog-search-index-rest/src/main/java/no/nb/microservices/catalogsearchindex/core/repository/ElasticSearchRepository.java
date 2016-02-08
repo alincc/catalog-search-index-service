@@ -178,9 +178,13 @@ public class ElasticSearchRepository implements SearchRepository {
 
 
         if (searchCriteria.getShould().length > 0) {
-            for (String should : searchCriteria.getShould()) {
-                String[] split = should.split(",");
-                boolQueryBuilder.should(QueryBuilders.termQuery(split[0],split[1]));
+            if (searchCriteria.getShould().length == 2 && searchCriteria.getShould()[0].indexOf(",") == -1) {
+                boolQueryBuilder.should(QueryBuilders.termQuery(searchCriteria.getShould()[0], searchCriteria.getShould()[1]));
+            } else {
+                for (String should : searchCriteria.getShould()) {
+                    String[] split = should.split(",");
+                    boolQueryBuilder.should(QueryBuilders.termQuery(split[0], split[1]));
+                }
             }
         }
 
