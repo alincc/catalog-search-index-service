@@ -67,7 +67,7 @@ public class ElasticSearchRepository implements SearchRepository {
         SearchSourceBuilder searchBuilder = SearchSourceBuilder.searchSource()
                 .query(queryBuilder);
         searchBuilder = searchBuilder.highlight(SearchSourceBuilder.highlight()
-                .field("freetext", 1, 10000, 0).preTags("")
+                .field("freetext", 200, 10000, 0).preTags("")
                 .postTags(""));
         searchBuilder = searchBuilder.field("freetext_metadata");
         
