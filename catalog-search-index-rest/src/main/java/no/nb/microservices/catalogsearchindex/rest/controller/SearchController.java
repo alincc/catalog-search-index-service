@@ -38,7 +38,7 @@ public class SearchController {
     
     @InitBinder
     public void sortBinderInit(WebDataBinder binder) {
-        binder.registerCustomEditor(String[].class, "boost", new StringArrayPropertyEditor(null));
+        binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor(null));
     }
 
     @ApiOperation(value = "Search", notes = "Search in NBQL", response = String.class)
@@ -56,6 +56,7 @@ public class SearchController {
             @RequestParam(value = "precision", required = false, defaultValue = "5") int precision,
             @RequestParam(value = "explain", required = false) boolean explain,
             @RequestParam(value = "filter", required = false) String[] filters,
+            @RequestParam(value = "should", required = false) String[] should,
             @RequestParam(value = "grouping", required = false) boolean grouping) {
 
         SearchCriteria searchCriteria = new SearchCriteria(searchString);
@@ -66,6 +67,7 @@ public class SearchController {
         searchCriteria.setFilters(filters);
         searchCriteria.setBoost(boost);
         searchCriteria.setGrouping(grouping);
+        searchCriteria.setShould(should);
 
         if(topRight != null && bottomLeft != null) {
             GeoSearch geoSearch = new GeoSearch();

@@ -18,6 +18,7 @@ public class SearchCriteria {
     private boolean explain;
     private String[] filters;
     private String[] boost;
+    private String[] should;
     private boolean grouping;
 
     public SearchCriteria(String searchString) {
@@ -100,6 +101,17 @@ public class SearchCriteria {
             }
         }
         return boostMap;
+    }
+
+    public String[] getShould() {
+        if (should == null) {
+            this.should = new String[0];
+        }
+        return should;
+    }
+
+    public void setShould(String[] should) {
+        this.should = should;
     }
 
 	public boolean isGrouping() {

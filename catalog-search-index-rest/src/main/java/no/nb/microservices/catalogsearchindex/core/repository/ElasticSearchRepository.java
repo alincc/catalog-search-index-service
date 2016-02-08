@@ -173,6 +173,17 @@ public class ElasticSearchRepository implements SearchRepository {
 
         QueryStringQueryBuilder query = getQueryStringQueryBuilder(searchCriteria);
 
+        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+        boolQueryBuilder.must(query);
+
+
+        if (searchCriteria.getShould().length > 0) {
+            for (String should : searchCriteria.getShould()) {
+                String[] split = should.split(",");
+                boolQueryBuilder.should(QueryBuilders.termQuery(split[0],split[1]));
+            }
+        }
+
         GeoBoundingBoxFilterBuilder geoBoundingBoxFilterBuilder = null;
         GeoSearch geoSearch = searchCriteria.getGeoSearch();
         if(geoSearch != null) {
@@ -197,7 +208,7 @@ public class ElasticSearchRepository implements SearchRepository {
             filterBuilder = FilterBuilders.boolFilter().must(filters.toArray(new FilterBuilder[filters.size()]));
         }
 
-        FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(query, filterBuilder);
+        FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(boolQueryBuilder, filterBuilder);
         searchRequestBuilder.setQuery(filteredQueryBuilder);
         searchRequestBuilder.addField("location");
         searchRequestBuilder.addField("firstIndexTime");
@@ -214,6 +225,7 @@ public class ElasticSearchRepository implements SearchRepository {
         aggregations(searchCriteria, searchRequestBuilder);
         sort(searchCriteria, searchRequestBuilder);
         boost(searchCriteria, query);
+
 
         return searchRequestBuilder;
     }
