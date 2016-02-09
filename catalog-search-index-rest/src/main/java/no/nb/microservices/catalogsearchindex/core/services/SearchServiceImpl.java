@@ -38,9 +38,9 @@ public class SearchServiceImpl implements ISearchService {
     }
 
     @Override
-    public SearchAggregated searchWithin(String id, String q,
+    public SearchAggregated contentSearch(String id, String q,
             Pageable pageable) {
-        return searchRepository.searchWithin(id, q, pageable);
+        return searchRepository.contentSearch(id, q, pageable);
     }
 
     

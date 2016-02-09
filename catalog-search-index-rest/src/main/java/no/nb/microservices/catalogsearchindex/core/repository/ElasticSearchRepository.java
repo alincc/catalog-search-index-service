@@ -51,7 +51,7 @@ public class ElasticSearchRepository implements SearchRepository {
     }
     
     @Override
-    public SearchAggregated searchWithin(String id, String searchString, Pageable pageable) {
+    public SearchAggregated contentSearch(String id, String searchString, Pageable pageable) {
         SearchRequestBuilder search = buildFreetextQuery(id, searchString, pageable);
         SearchResponse searchResponse = search.execute().actionGet();
         Page<Item> page = extractSearchResult(searchResponse, pageable);
@@ -63,7 +63,7 @@ public class ElasticSearchRepository implements SearchRepository {
         queryBuilder = queryBuilder.must(
                 QueryBuilders.queryStringQuery(searchString).field("freetext"));
         queryBuilder = queryBuilder
-                .must(QueryBuilders.idsQuery().addIds(id));
+                .must(new QueryStringQueryBuilder("urn:\""+id+"\""));
         SearchSourceBuilder searchBuilder = SearchSourceBuilder.searchSource()
                 .query(queryBuilder);
         searchBuilder = searchBuilder.highlight(SearchSourceBuilder.highlight()

@@ -16,19 +16,19 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import no.nb.microservices.catalogsearchindex.core.model.Item;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
-import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
+import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
 
 
-public class SearchWithinResourceAssembler extends ResourceAssemblerSupport<SearchAggregated, SearchWithinResource> {
+public class ContentSearchResourceAssembler extends ResourceAssemblerSupport<SearchAggregated, ContentSearchResource> {
     private final HateoasPageableHandlerMethodArgumentResolver pageableResolver = new HateoasPageableHandlerMethodArgumentResolver();
     
-    public SearchWithinResourceAssembler() {
-        super(SearchController.class, SearchWithinResource.class);
+    public ContentSearchResourceAssembler() {
+        super(SearchController.class, ContentSearchResource.class);
     }
     
     @Override
-    public SearchWithinResource toResource(SearchAggregated result) {
-        SearchWithinResource resource = new SearchWithinResource(asPageMetadata(result.getPage()));
+    public ContentSearchResource toResource(SearchAggregated result) {
+        ContentSearchResource resource = new ContentSearchResource(asPageMetadata(result.getPage()));
         
         for(String fragment : getFreetextFragments(result)) {
             resource.addFragment(fragment);
@@ -58,7 +58,7 @@ public class SearchWithinResourceAssembler extends ResourceAssemblerSupport<Sear
         }
     }
     
-    private SearchWithinResource addPaginationLinks(SearchWithinResource resources, Page<?> page) {
+    private ContentSearchResource addPaginationLinks(ContentSearchResource resources, Page<?> page) {
 
         UriTemplate base = new UriTemplate(ServletUriComponentsBuilder.fromCurrentRequest().build().toString());
 
