@@ -301,7 +301,7 @@ public class ElasticSearchRepository implements SearchRepository {
                 .prepareSearch(SCHEMA_NAME)
                 .setTypes(TYPE_NAME)
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                .setFrom(pageRequest.getPageNumber())
+                .setFrom(pageRequest.getPageNumber() * pageRequest.getPageSize())
                 .setSize(pageRequest.getPageSize());
     }
 
