@@ -8,5 +8,5 @@ public interface SearchRepository {
     
     SearchAggregated search(SearchCriteria searchCriteria);
 
-    SearchAggregated searchWithin(String id, String searchString, Pageable pageRequest);
+    SearchAggregated contentSearch(String id, String searchString, Pageable pageRequest);
 }

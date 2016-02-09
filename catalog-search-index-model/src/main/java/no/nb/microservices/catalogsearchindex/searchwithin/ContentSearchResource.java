@@ -15,17 +15,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "_links", "freetextMetadatas", "fragments" })
-public class SearchWithinResource extends ResourceSupport {
+public class ContentSearchResource extends ResourceSupport {
     @JsonProperty("page")
     private PageMetadata metadata;
     private List<String> freetextMetadatas;
     private List<String> fragments;
 
-    public SearchWithinResource() {
+    public ContentSearchResource() {
         super();
     }
 
-    public SearchWithinResource(PageMetadata metadata) {
+    public ContentSearchResource(PageMetadata metadata) {
         super();
         this.metadata = metadata;
     }

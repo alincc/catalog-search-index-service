@@ -11,7 +11,7 @@ import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
-import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
+import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.elasticsearch.common.geo.GeoPoint;
@@ -92,13 +92,13 @@ public class SearchController {
     	throw new NotImplementedException("Scroll not implemented");
     }
 
-    @Traceable(description="/searchWithin")
+    @Traceable(description="/contentsearch")
     @RequestMapping(value = "/{id}/search", method = RequestMethod.GET)
-    public ResponseEntity<SearchWithinResource> searchWithin(@PathVariable(value = "id") String id, 
+    public ResponseEntity<ContentSearchResource> contentSearch(@PathVariable(value = "id") String id, 
             @RequestParam(value = "q") String q,
             @PageableDefault Pageable pageRequest) {
-        SearchAggregated result = searchService.searchWithin(id, q, pageRequest);
-        SearchWithinResource resource = new SearchWithinResourceAssembler()
+        SearchAggregated result = searchService.contentSearch(id, q, pageRequest);
+        ContentSearchResource resource = new ContentSearchResourceAssembler()
                 .toResource(result);
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }

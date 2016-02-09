@@ -1,7 +1,7 @@
 package no.nb.microservices.catalogsearchindex;
 
 import no.nb.microservices.catalogsearchindex.config.ElasticSearchTestConfig;
-import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
+import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,11 +66,11 @@ public class SearchControllerIT {
 	}
 	
 	@Test
-    public void testSearchWithin() {
-        ResponseEntity<SearchWithinResource> entity = new TestRestTemplate().getForEntity(
-                "http://localhost:" + this.port + "/catalog/v1/0b8501b8e2b822c8ec13558de82aaef9/search?q=teater", SearchWithinResource.class);
+    public void testContentSearch() {
+        ResponseEntity<ContentSearchResource> entity = new TestRestTemplate().getForEntity(
+                "http://localhost:" + this.port + "/catalog/v1/URN:NBN:no-nb_digibok_2014062707144/search?q=teater", ContentSearchResource.class);
 
-        SearchWithinResource searchResource = entity.getBody();
+        ContentSearchResource searchResource = entity.getBody();
 
         assertThat("Should have freetext metadada", searchResource.getFreetextMetadatas(), hasSize(1));
         assertThat("Should have fragments",searchResource.getFragments(), hasSize(1));
