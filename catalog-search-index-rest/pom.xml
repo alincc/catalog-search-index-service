@@ -138,8 +138,8 @@
                 <version>0.4.0</version>
                 <configuration>
                     <imageName>${docker.registry}/${docker.image.prefix}/${project.artifactId}</imageName>
-                    <baseImage>java</baseImage>
-                    <entryPoint>["java", "-Dspring.profiles.active=docker", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                    <baseImage>java:8-jre</baseImage>
+                    <entryPoint>java $JAVA_OPTS $OTHER_OPTS -Dspring.profiles.active=docker -jar /${project.build.finalName}.jar</entryPoint>
                     <imageTags>
                         <imageTag>${project.version}</imageTag>
                         <imageTag>latest</imageTag>
