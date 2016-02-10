@@ -28,7 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import no.nb.microservices.catalogsearchindex.core.model.Item;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
-import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
+import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SearchControllerTest {
@@ -53,11 +53,11 @@ public class SearchControllerTest {
     
     @Test
     public void testSearchWithin() {
-        given(searchService.searchWithin(anyString(), anyString(), anyObject()))
+        given(searchService.contentSearch(anyString(), anyString(), anyObject()))
                 .willReturn(searchWithin());
 
-        ResponseEntity<SearchWithinResource> searchWithin = controller
-                .searchWithin("id", "q", getPageable());
+        ResponseEntity<ContentSearchResource> searchWithin = controller
+                .contentSearch("id", "q", getPageable());
 
         assertThat("Should hava a self reference", searchWithin.getBody().getId().getHref(), is("http://localhost/catalog/v1/id/search?q=q"));
         assertThat("Should have fragments", searchWithin.getBody().getFragments().size(), is(2));

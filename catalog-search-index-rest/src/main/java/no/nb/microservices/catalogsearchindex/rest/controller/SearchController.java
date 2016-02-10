@@ -11,7 +11,7 @@ import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
 import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
-import no.nb.microservices.catalogsearchindex.searchwithin.SearchWithinResource;
+import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
 
 import org.apache.commons.lang3.NotImplementedException;
 import org.elasticsearch.common.geo.GeoPoint;
@@ -38,7 +38,7 @@ public class SearchController {
     
     @InitBinder
     public void sortBinderInit(WebDataBinder binder) {
-        binder.registerCustomEditor(String[].class, "boost", new StringArrayPropertyEditor(null));
+        binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor(null));
     }
 
     @ApiOperation(value = "Search", notes = "Search in NBQL", response = String.class)
@@ -56,6 +56,7 @@ public class SearchController {
             @RequestParam(value = "precision", required = false, defaultValue = "5") int precision,
             @RequestParam(value = "explain", required = false) boolean explain,
             @RequestParam(value = "filter", required = false) String[] filters,
+            @RequestParam(value = "should", required = false) String[] should,
             @RequestParam(value = "grouping", required = false) boolean grouping) {
 
         SearchCriteria searchCriteria = new SearchCriteria(searchString);
@@ -66,6 +67,7 @@ public class SearchController {
         searchCriteria.setFilters(filters);
         searchCriteria.setBoost(boost);
         searchCriteria.setGrouping(grouping);
+        searchCriteria.setShould(should);
 
         if(topRight != null && bottomLeft != null) {
             GeoSearch geoSearch = new GeoSearch();
@@ -90,13 +92,13 @@ public class SearchController {
     	throw new NotImplementedException("Scroll not implemented");
     }
 
-    @Traceable(description="/searchWithin")
+    @Traceable(description="/contentsearch")
     @RequestMapping(value = "/{id}/search", method = RequestMethod.GET)
-    public ResponseEntity<SearchWithinResource> searchWithin(@PathVariable(value = "id") String id, 
+    public ResponseEntity<ContentSearchResource> contentSearch(@PathVariable(value = "id") String id, 
             @RequestParam(value = "q") String q,
             @PageableDefault Pageable pageRequest) {
-        SearchAggregated result = searchService.searchWithin(id, q, pageRequest);
-        SearchWithinResource resource = new SearchWithinResourceAssembler()
+        SearchAggregated result = searchService.contentSearch(id, q, pageRequest);
+        ContentSearchResource resource = new ContentSearchResourceAssembler()
                 .toResource(result);
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }

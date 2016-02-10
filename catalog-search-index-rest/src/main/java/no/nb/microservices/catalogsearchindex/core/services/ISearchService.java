@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface ISearchService {
     SearchAggregated search(SearchCriteria searchCriteria);
-    SearchAggregated searchWithin(String id, String q, Pageable pageRequest);
+    SearchAggregated contentSearch(String id, String q, Pageable pageRequest);
 }

@@ -51,7 +51,7 @@ public class ElasticSearchRepository implements SearchRepository {
     }
     
     @Override
-    public SearchAggregated searchWithin(String id, String searchString, Pageable pageable) {
+    public SearchAggregated contentSearch(String id, String searchString, Pageable pageable) {
         SearchRequestBuilder search = buildFreetextQuery(id, searchString, pageable);
         SearchResponse searchResponse = search.execute().actionGet();
         Page<Item> page = extractSearchResult(searchResponse, pageable);
@@ -63,11 +63,11 @@ public class ElasticSearchRepository implements SearchRepository {
         queryBuilder = queryBuilder.must(
                 QueryBuilders.queryStringQuery(searchString).field("freetext"));
         queryBuilder = queryBuilder
-                .must(QueryBuilders.idsQuery().addIds(id));
+                .must(new QueryStringQueryBuilder("urn:\""+id+"\""));
         SearchSourceBuilder searchBuilder = SearchSourceBuilder.searchSource()
                 .query(queryBuilder);
         searchBuilder = searchBuilder.highlight(SearchSourceBuilder.highlight()
-                .field("freetext", 1, 10000, 0).preTags("")
+                .field("freetext", 200, 10000, 0).preTags("")
                 .postTags(""));
         searchBuilder = searchBuilder.field("freetext_metadata");
         
@@ -173,6 +173,21 @@ public class ElasticSearchRepository implements SearchRepository {
 
         QueryStringQueryBuilder query = getQueryStringQueryBuilder(searchCriteria);
 
+        BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
+        boolQueryBuilder.must(query);
+
+
+        if (searchCriteria.getShould().length > 0) {
+            if (searchCriteria.getShould().length == 2 && searchCriteria.getShould()[0].indexOf(",") == -1) {
+                boolQueryBuilder.should(QueryBuilders.termQuery(searchCriteria.getShould()[0], searchCriteria.getShould()[1]));
+            } else {
+                for (String should : searchCriteria.getShould()) {
+                    String[] split = should.split(",");
+                    boolQueryBuilder.should(QueryBuilders.termQuery(split[0], split[1]));
+                }
+            }
+        }
+
         GeoBoundingBoxFilterBuilder geoBoundingBoxFilterBuilder = null;
         GeoSearch geoSearch = searchCriteria.getGeoSearch();
         if(geoSearch != null) {
@@ -197,7 +212,7 @@ public class ElasticSearchRepository implements SearchRepository {
             filterBuilder = FilterBuilders.boolFilter().must(filters.toArray(new FilterBuilder[filters.size()]));
         }
 
-        FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(query, filterBuilder);
+        FilteredQueryBuilder filteredQueryBuilder = new FilteredQueryBuilder(boolQueryBuilder, filterBuilder);
         searchRequestBuilder.setQuery(filteredQueryBuilder);
         searchRequestBuilder.addField("location");
         searchRequestBuilder.addField("firstIndexTime");
@@ -214,6 +229,7 @@ public class ElasticSearchRepository implements SearchRepository {
         aggregations(searchCriteria, searchRequestBuilder);
         sort(searchCriteria, searchRequestBuilder);
         boost(searchCriteria, query);
+
 
         return searchRequestBuilder;
     }
@@ -285,7 +301,7 @@ public class ElasticSearchRepository implements SearchRepository {
                 .prepareSearch(SCHEMA_NAME)
                 .setTypes(TYPE_NAME)
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                .setFrom(pageRequest.getPageNumber())
+                .setFrom(pageRequest.getPageNumber() * pageRequest.getPageSize())
                 .setSize(pageRequest.getPageSize());
     }
 

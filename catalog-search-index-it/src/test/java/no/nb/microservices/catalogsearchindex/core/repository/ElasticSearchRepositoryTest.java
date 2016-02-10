@@ -160,6 +160,14 @@ public class ElasticSearchRepositoryTest {
         assertThat(search, notNullValue());
     }
 
+    @Test
+    public void searchWithShould() {
+        searchCriteria.setShould(new String[]{"title,peter"});
+
+        SearchAggregated search = searchRepository.search(searchCriteria);
+        assertThat(search, notNullValue());
+    }
+
     private GeoSearch createGeoSearchWithZoomOnNordland(int precision) {
         GeoSearch geoSearch = new GeoSearch();
         geoSearch.setTopRight(new GeoPoint(68.47, 18.09));
