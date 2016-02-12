@@ -9,49 +9,11 @@ info:
         version: ${project.version}
 
 server:
-    port: 8200
-
-endpoints:
-    restart:
-      enabled: true
-    refresh:
-      enabled: true
-
-eureka:
-  instance:
-    preferIpAddress: true
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+    port: 0
 
 zipkin:
     collector-hostname: localhost
 
-spring:
-    application:
-      name: catalog-search-index-service
-
 catalog:
   esHosts:
     - localhost
-
----
-spring:
-    profiles: docker
-  
-server:
-    port: 8080
-
-eureka:
-  instance:
-    preferIpAddress: true
-  client:
-    serviceUrl:
-      defaultZone: http://discovery:8761/eureka/
-      
-zipkin:
-    collector-hostname: zipkinCollector
-
-catalog:
-  esHosts:
-    - elasticsearch
