@@ -80,9 +80,9 @@ public class SearchController {
         }
 
         SearchAggregated result = searchService.search(searchCriteria);
-
         SearchResource resource = new SearchResultResourceAssembler()
                 .toResource(result);
+
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 

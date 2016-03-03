@@ -29,15 +29,18 @@ public class ContentSearchResourceAssembler extends ResourceAssemblerSupport<Sea
     @Override
     public ContentSearchResource toResource(SearchAggregated result) {
         ContentSearchResource resource = new ContentSearchResource(asPageMetadata(result.getPage()));
-        
-        for(String fragment : getFreetextFragments(result)) {
-            resource.addFragment(fragment);
-        }
-        for(String metadata : getFreetextMetadata(result)) {
-            resource.addFreetextMetdatas(metadata);
-        }
+
+        getFreetextFragments(result)
+                .forEach(resource::addFragment);
+
+        getFreetextMetadata(result)
+                .forEach(resource::addFreetextMetdatas);
 
         return addPaginationLinks(resource, result.getPage());
+    }
+
+    private static <T> PageMetadata asPageMetadata(Page<T> page) {
+        return new PageMetadata(page.getSize(), page.getNumber(), page.getTotalElements(), page.getTotalPages());
     }
 
     private List<String> getFreetextFragments(SearchAggregated search) {
@@ -93,9 +96,4 @@ public class ContentSearchResourceAssembler extends ResourceAssemblerSupport<Sea
 
         return new Link(new UriTemplate(builder.build().toString()), rel);
     }
-
-    private static <T> PageMetadata asPageMetadata(Page<T> page) {
-        return new PageMetadata(page.getSize(), page.getNumber(), page.getTotalElements(), page.getTotalPages());
-    }
-
 }
