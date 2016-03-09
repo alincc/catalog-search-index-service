@@ -17,3 +17,10 @@ zipkin:
 catalog:
   esHosts:
     - localhost
+    
+---
+spring:
+  profiles: local
+  
+server:
+  port: 8200
