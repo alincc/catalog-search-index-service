@@ -12,6 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class Item {
 
     private String id;
+    private String urn;
     private List<String> freetextMetadatas;
     private List<String> freetextHits;
     private String location;
@@ -40,6 +41,14 @@ public class Item {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUrn() {
+        return urn;
+    }
+
+    public void setUrn(String urn) {
+        this.urn = urn;
     }
 
     public List<String> getFreetextMetadatas() {

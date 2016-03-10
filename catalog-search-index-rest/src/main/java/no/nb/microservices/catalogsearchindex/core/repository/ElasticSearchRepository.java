@@ -88,6 +88,9 @@ public class ElasticSearchRepository implements SearchRepository {
         ObjectMapper mapper = new ObjectMapper();
         for (SearchHit searchHit : searchResponse.getHits()) {
             Item item = new Item(searchHit.getId());
+            if (searchHit.getFields().containsKey("urn")) {
+                item.setUrn(searchHit.getFields().get("urn").getValue().toString());
+            }
             if (searchHit.getFields().containsKey("firstIndexTime")) {
                 item.setFirstIndexTime(searchHit.getFields().get("firstIndexTime").getValue().toString());
             }
@@ -245,6 +248,7 @@ public class ElasticSearchRepository implements SearchRepository {
         searchRequestBuilder.addField("mediatype");
         searchRequestBuilder.addField("thumbnailurn");
         searchRequestBuilder.addField("creator");
+        searchRequestBuilder.addField("urn");
     }
 
     private void aggregations(SearchCriteria searchCriteria,

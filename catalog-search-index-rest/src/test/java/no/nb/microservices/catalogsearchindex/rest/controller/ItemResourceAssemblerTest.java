@@ -36,6 +36,7 @@ public class ItemResourceAssemblerTest {
 		ItemResourceAssembler assembler = new ItemResourceAssembler();
 		Item item = new Item();
 		item.setId("Junit");
+        item.setUrn("URN:NBN:no-nb_digimanus_120847");
         item.setFirstIndexTime("2015-05-05");
         item.setContentClasses(Arrays.asList("restricted", "public"));
         item.setMetadataClasses(Arrays.asList("public"));
@@ -58,6 +59,7 @@ public class ItemResourceAssemblerTest {
         assertEquals("Should hava a title", item.getTitle(), resource.getTitle());
         assertEquals("Should have two media types", 2 ,resource.getMediaTypes().size());
         assertEquals("Should have thumbnail URN", item.getThumbnailUrn(), resource.getThumbnailUrn());
+        assertEquals("Should have URN", item.getUrn(), resource.getUrn());
         assertNotNull("Should have explain node", resource.getExplain());
 	}
 }

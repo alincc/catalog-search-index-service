@@ -14,6 +14,7 @@ import org.springframework.hateoas.ResourceSupport;
 public class ItemResource extends ResourceSupport {
 
     private String itemId;
+    private String urn;
     private Location location;
     private String firstIndexTime;
     private Integer pageCount;
@@ -32,6 +33,14 @@ public class ItemResource extends ResourceSupport {
 
     public void setItemId(String itemId) {
         this.itemId = itemId;
+    }
+
+    public String getUrn() {
+        return urn;
+    }
+
+    public void setUrn(String urn) {
+        this.urn = urn;
     }
 
     public Location getLocation() {
