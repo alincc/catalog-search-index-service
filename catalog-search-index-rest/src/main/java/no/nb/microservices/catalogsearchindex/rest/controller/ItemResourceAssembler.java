@@ -40,6 +40,7 @@ public class ItemResourceAssembler extends
         resource.setThumbnailUrn(item.getThumbnailUrn());
         resource.setCreators(item.getCreators());
         resource.setUrn(item.getUrn());
+        resource.setDateIssued(item.getDateIssued());
         return resource;
     }
 

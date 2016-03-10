@@ -26,6 +26,7 @@ public class Item {
     private String thumbnailUrn;
     private JsonNode explain;
     private List<String> creators;
+    private String dateIssued;
 
     public Item() {
         super();
@@ -180,8 +181,16 @@ public class Item {
 	public void setCreators(List<String> creators) {
 		this.creators = creators;
 	}
-	
-	@Override
+
+    public String getDateIssued() {
+        return dateIssued;
+    }
+
+    public void setDateIssued(String dateIssued) {
+        this.dateIssued = dateIssued;
+    }
+
+    @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 31).
             append(title).

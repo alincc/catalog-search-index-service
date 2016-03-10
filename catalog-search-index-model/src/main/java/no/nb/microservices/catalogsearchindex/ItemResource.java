@@ -26,6 +26,7 @@ public class ItemResource extends ResourceSupport {
     private String thumbnailUrn;
     private JsonNode explain;
     private List<String> creators;
+    private String dateIssued;
 
     public String getItemId() {
         return itemId;
@@ -146,4 +147,12 @@ public class ItemResource extends ResourceSupport {
 	public void setCreators(List<String> creators) {
 		this.creators = creators;
 	}
+
+    public String getDateIssued() {
+        return dateIssued;
+    }
+
+    public void setDateIssued(String dateIssued) {
+        this.dateIssued = dateIssued;
+    }
 }
