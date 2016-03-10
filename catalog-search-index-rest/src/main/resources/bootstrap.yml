@@ -1,16 +1,14 @@
 spring:
   application:
     name: catalog-search-index-service
-    
----
-spring:
-  profiles: local
   cloud:
     config:
+      failFast: false
       discovery:
-        enabled: false
+        enabled: true
 
 ---
+
 spring:
   profiles: docker
   cloud:

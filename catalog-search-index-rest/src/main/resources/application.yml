@@ -9,7 +9,7 @@ info:
         version: ${project.version}
 
 server:
-    port: 0
+    port: 8006
 
 zipkin:
     collector-hostname: localhost
@@ -17,10 +17,3 @@ zipkin:
 catalog:
   esHosts:
     - localhost
-    
----
-spring:
-  profiles: local
-  
-server:
-  port: 8200
