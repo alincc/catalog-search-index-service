@@ -134,6 +134,9 @@ public class ElasticSearchRepository implements SearchRepository {
                         .map(String::valueOf)
                         .collect(Collectors.toList()));
             }
+            if (searchHit.getFields().containsKey("dateissued")) {
+                item.setDateIssued(searchHit.getFields().get("dateissued").getValue().toString());
+            }
 
             List<Text> fragments = getFreetextHits(searchHit);
             for(Text fragment : fragments) {
@@ -249,6 +252,7 @@ public class ElasticSearchRepository implements SearchRepository {
         searchRequestBuilder.addField("thumbnailurn");
         searchRequestBuilder.addField("creator");
         searchRequestBuilder.addField("urn");
+        searchRequestBuilder.addField("dateissued");
     }
 
     private void aggregations(SearchCriteria searchCriteria,
