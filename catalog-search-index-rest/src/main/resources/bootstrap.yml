@@ -22,4 +22,4 @@ eureka:
     preferIpAddress: true
   client:
     serviceUrl:
-      defaultZone: http://discovery:8761/eureka/
+      defaultZone: ${SPRING_EUREKA_URI:http://discovery:8761/eureka/}
