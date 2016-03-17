@@ -59,10 +59,10 @@ public class SearchResultResourceAssemblerTest {
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
         
         assertThat("The page element should not be null", searchResultResource.getMetadata(), notNullValue());
-        assertThat("The number should be 2", searchResultResource.getMetadata().getNumber(), is(2));
-        assertThat("The size should be 10", searchResultResource.getMetadata().getSize(), is(10));
-        assertThat("The total elements should be 1000", searchResultResource.getMetadata().getTotalElements(), is(1000));
-        assertThat("The total pages should be 100", searchResultResource.getMetadata().getTotalPages(), is(100));
+        assertThat("The number should be 2", searchResultResource.getMetadata().getNumber(), is(2L));
+        assertThat("The size should be 10", searchResultResource.getMetadata().getSize(), is(10L));
+        assertThat("The total elements should be 1000", searchResultResource.getMetadata().getTotalElements(), is(1000L));
+        assertThat("The total pages should be 100", searchResultResource.getMetadata().getTotalPages(), is(100L));
     }
     
     @Test
