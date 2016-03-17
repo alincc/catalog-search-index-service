@@ -48,7 +48,6 @@ public class SearchController {
     public ResponseEntity<SearchResource> search(
             @RequestParam(value = "q") String searchString,
             @RequestParam(value = "aggs", required = false) String[] aggregations,
-            @PageableDefault Pageable pageRequest,
             @RequestParam(value = "boost", required = false) String[] boost,
             @RequestParam(value = "searchType", required = false, defaultValue = "FULL_TEXT_SEARCH") NBSearchType searchType,
             @RequestParam(value = "topRight", required = false) double[] topRight,
@@ -57,27 +56,21 @@ public class SearchController {
             @RequestParam(value = "explain", required = false) boolean explain,
             @RequestParam(value = "filter", required = false) String[] filters,
             @RequestParam(value = "should", required = false) String[] should,
-            @RequestParam(value = "grouping", required = false) boolean grouping) {
+            @RequestParam(value = "grouping", required = false) boolean grouping,
+            @PageableDefault Pageable pageRequest) {
 
         SearchCriteria searchCriteria = new SearchCriteria(searchString);
         searchCriteria.setAggregations(aggregations);
-        searchCriteria.setPageRequest(pageRequest);
         searchCriteria.setSearchType(searchType);
         searchCriteria.setExplain(explain);
         searchCriteria.setFilters(filters);
         searchCriteria.setBoost(boost);
         searchCriteria.setGrouping(grouping);
         searchCriteria.setShould(should);
-
-        if(topRight != null && bottomLeft != null) {
-            GeoSearch geoSearch = new GeoSearch();
-            if(topRight.length == 2 && bottomLeft.length == 2) {
-                geoSearch.setTopRight(new GeoPoint(topRight[0], topRight[1]));
-                geoSearch.setBottomLeft(new GeoPoint(bottomLeft[0], bottomLeft[1]));
-            }
-            geoSearch.setPrecision(precision);
-            searchCriteria.setGeoSearch(geoSearch);
-        }
+        searchCriteria.setPrecision(precision);
+        searchCriteria.setTopRight(topRight);
+        searchCriteria.setBottomLeft(bottomLeft);
+        searchCriteria.setPageRequest(pageRequest);
 
         SearchAggregated result = searchService.search(searchCriteria);
         SearchResource resource = new SearchResultResourceAssembler()

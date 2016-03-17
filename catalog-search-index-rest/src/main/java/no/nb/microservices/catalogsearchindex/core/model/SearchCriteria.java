@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.data.domain.Pageable;
 
 public class SearchCriteria {
@@ -19,6 +20,9 @@ public class SearchCriteria {
     private String[] boost;
     private String[] should;
     private boolean grouping;
+    private int precision;
+    private double[] topRight;
+    private double[] bottomLeft;
 
     public SearchCriteria(String searchString) {
         this.searchString = searchString;
@@ -57,6 +61,14 @@ public class SearchCriteria {
     }
 
     public GeoSearch getGeoSearch() {
+        if(getTopRight() != null && getBottomLeft() != null) {
+            GeoSearch geoSearch = new GeoSearch();
+            if(getTopRight().length == 2 && getBottomLeft().length == 2) {
+                geoSearch.setTopRight(new GeoPoint(getTopRight()[0], getTopRight()[1]));
+                geoSearch.setBottomLeft(new GeoPoint(getBottomLeft()[0], getBottomLeft()[1]));
+            }
+            geoSearch.setPrecision(getPrecision());
+        }        
         return geoSearch;
     }
 
@@ -120,4 +132,28 @@ public class SearchCriteria {
 	public void setGrouping(boolean grouping) {
 		this.grouping = grouping;
 	}
+
+    public int getPrecision() {
+        return precision;
+    }
+
+    public void setPrecision(int precision) {
+        this.precision = precision;
+    }
+
+    public double[] getTopRight() {
+        return topRight;
+    }
+
+    public void setTopRight(double[] topRight) {
+        this.topRight = topRight;
+    }
+
+    public double[] getBottomLeft() {
+        return bottomLeft;
+    }
+
+    public void setBottomLeft(double[] bottomLeft) {
+        this.bottomLeft = bottomLeft;
+    }
 }
