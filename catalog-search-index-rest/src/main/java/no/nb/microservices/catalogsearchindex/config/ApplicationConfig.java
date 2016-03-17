@@ -6,9 +6,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by alfredw on 9/15/15.
- */
 @Component
 @ConfigurationProperties(prefix = "catalog")
 public class ApplicationConfig {

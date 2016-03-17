@@ -10,7 +10,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Item {
-
     private String id;
     private String urn;
     private List<String> freetextMetadatas;

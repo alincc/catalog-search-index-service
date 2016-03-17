@@ -9,7 +9,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Pageable;
 
 public class SearchCriteria {
-
     private String searchString;
     private String[] aggregations;
     private Pageable pageRequest;

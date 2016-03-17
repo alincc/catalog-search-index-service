@@ -4,7 +4,6 @@ import org.elasticsearch.search.aggregations.Aggregations;
 import org.springframework.data.domain.Page;
 
 public class SearchAggregated {
-
     private Page<Item> page;
     private Aggregations aggregations;
     private String scrollId;
