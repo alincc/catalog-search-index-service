@@ -11,8 +11,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
@@ -44,22 +47,22 @@ public class ItemResourceAssemblerTest {
         item.setTitle("Nice Title");
         item.setMediaTypes(Arrays.asList("Bøker", "Musikk"));
         item.setThumbnailUrn("URN:NBN:no-nb_digimanus_120847_0001");
-
         ObjectMapper mapper = new ObjectMapper();
         String json = "{}";
         JsonNode jsonNode = mapper.convertValue(json, JsonNode.class);
         item.setExplain(jsonNode);
 
         ItemResource resource = assembler.toResource(item);
-		assertEquals("Junit", resource.getItemId());
-        assertEquals("2015-05-05", resource.getFirstIndexTime());
-        assertEquals("Should have two contentClasses", 2 ,resource.getContentClasses().size());
-        assertEquals("Should have one metadataClasses", 1 ,resource.getMetadataClasses().size());
-        assertEquals("Should be digital", true, resource.isDigital());
-        assertEquals("Should hava a title", item.getTitle(), resource.getTitle());
-        assertEquals("Should have two media types", 2 ,resource.getMediaTypes().size());
-        assertEquals("Should have thumbnail URN", item.getThumbnailUrn(), resource.getThumbnailUrn());
-        assertEquals("Should have URN", item.getUrn(), resource.getUrn());
-        assertNotNull("Should have explain node", resource.getExplain());
+
+        assertThat(resource.getItemId(), is("Junit"));
+        assertThat(resource.getFirstIndexTime(), is("2015-05-05"));
+        assertThat("Should have two contentClasses", resource.getContentClasses().size(), is(2));
+        assertThat("Should have one metadataClasses", resource.getMetadataClasses().size(), is(1));
+        assertThat("Should be digital", resource.isDigital(), is(true));
+        assertThat("Should hava a title", resource.getTitle(), is(item.getTitle()));
+        assertThat("Should have two media types", resource.getMediaTypes().size(), is(2));
+        assertThat("Should have thumbnail URN", resource.getThumbnailUrn(), is(item.getThumbnailUrn()));
+        assertThat("Should have URN", resource.getUrn(), is(item.getUrn()));
+        assertThat("Should have explain node", resource.getExplain(), notNullValue());
 	}
 }
