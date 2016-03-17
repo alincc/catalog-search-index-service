@@ -62,12 +62,12 @@ public class SearchCriteria {
 
     public GeoSearch getGeoSearch() {
         if(getTopRight() != null && getBottomLeft() != null) {
-            GeoSearch geoSearch = new GeoSearch();
+            geoSearch = new GeoSearch();
             if(getTopRight().length == 2 && getBottomLeft().length == 2) {
                 geoSearch.setTopRight(new GeoPoint(getTopRight()[0], getTopRight()[1]));
                 geoSearch.setBottomLeft(new GeoPoint(getBottomLeft()[0], getBottomLeft()[1]));
             }
-            geoSearch.setPrecision(getPrecision());
+            geoSearch.setPrecision(precision);
         }        
         return geoSearch;
     }

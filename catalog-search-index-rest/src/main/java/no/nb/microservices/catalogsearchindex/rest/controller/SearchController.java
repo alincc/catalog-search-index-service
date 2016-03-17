@@ -1,20 +1,6 @@
 package no.nb.microservices.catalogsearchindex.rest.controller;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
-import no.nb.htrace.annotation.Traceable;
-import no.nb.microservices.catalogsearchindex.NBSearchType;
-import no.nb.microservices.catalogsearchindex.SearchResource;
-import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
-import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
-import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
-import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
-import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
-
 import org.apache.commons.lang3.NotImplementedException;
-import org.elasticsearch.common.geo.GeoPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +8,23 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import no.nb.htrace.annotation.Traceable;
+import no.nb.microservices.catalogsearchindex.NBSearchType;
+import no.nb.microservices.catalogsearchindex.SearchResource;
+import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
+import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
+import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
+import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
 
 @RestController
 @RequestMapping("/catalog/v1")
-@Api(value = "/catalog/v1", description = "Search index API")
 public class SearchController {
 
     private final ISearchService searchService;
@@ -41,8 +39,6 @@ public class SearchController {
         binder.registerCustomEditor(String[].class, new StringArrayPropertyEditor(null));
     }
 
-    @ApiOperation(value = "Search", notes = "Search in NBQL", response = String.class)
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Successful response") })
     @Traceable(description="search")
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public ResponseEntity<SearchResource> search(
