@@ -1,18 +1,16 @@
 package no.nb.microservices.catalogsearchindex.rest.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
@@ -27,6 +25,9 @@ import org.springframework.hateoas.Link;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import no.nb.microservices.catalogsearchindex.SearchResource;
 import no.nb.microservices.catalogsearchindex.core.model.Item;
@@ -56,67 +57,84 @@ public class SearchResultResourceAssemblerTest {
         SearchAggregated searchAggregated = createSearchAggregated(2);
 
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertNotNull("The page element should not be null", searchResultResource.getMetadata());
-        assertEquals("The number should be 2", 2, searchResultResource.getMetadata().getNumber());
-        assertEquals("The size should be 10", 10, searchResultResource.getMetadata().getSize());
-        assertEquals("The total elements should be 1000", 1000, searchResultResource.getMetadata().getTotalElements());
-        assertEquals("The total pages should be 100", 100, searchResultResource.getMetadata().getTotalPages());
+        
+        assertThat("The page element should not be null", searchResultResource.getMetadata(), notNullValue());
+        assertThat("The number should be 2", searchResultResource.getMetadata().getNumber(), is(2));
+        assertThat("The size should be 10", searchResultResource.getMetadata().getSize(), is(10));
+        assertThat("The total elements should be 1000", searchResultResource.getMetadata().getTotalElements(), is(1000));
+        assertThat("The total pages should be 100", searchResultResource.getMetadata().getTotalPages(), is(100));
     }
     
     @Test
     public void whenOnAnyPageReturnValueShouldHaveASelfLinkElement() {
         SearchAggregated searchAggregated = createSearchAggregated(0);
+        
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertEquals("Should have a self-referential link element", "self", searchResultResource.getId().getRel());
+        
+        assertThat(searchResultResource.getId().getRel(), is("self"));
     }
 
     @Test
     public void whenOnFirstPageThenReturnValueShouldNotHaveAPreviousLinkElement() {
         SearchAggregated searchAggregated = createSearchAggregated(0);
+       
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertNull(searchResultResource.getLink(Link.REL_PREVIOUS));
+        
+        assertThat(searchResultResource.getLink(Link.REL_PREVIOUS), nullValue());
     }
 
     @Test
     public void whenOnLastPageThenReturnValueShouldNotHaveANextLinkElement() {
         SearchAggregated searchAggregated = createSearchAggregated(100);
+        
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertNull(searchResultResource.getLink(Link.REL_NEXT));
+        
+        assertThat(searchResultResource.getLink(Link.REL_NEXT), nullValue());
     }
 
     @Test
     public void whenNotOnFirstPageThenReturnValueShouldHaveAFirstLinkElement() {
         SearchAggregated searchAggregated = createSearchAggregated(2);
+        
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertNotNull(searchResultResource.getLink(Link.REL_FIRST));
+        
+        assertThat(searchResultResource.getLink(Link.REL_FIRST), notNullValue());
     }
 
     @Test
     public void whenNotOnLastPageThenReturnValueShouldHaveALastLinkElement() {
         SearchAggregated searchAggregated = createSearchAggregated(10);
+        
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertNotNull(searchResultResource.getLink(Link.REL_LAST));
+        
+        assertThat(searchResultResource.getLink(Link.REL_LAST), notNullValue());
     }
 
     @Test
     public void whenItNotOnLastPageThenReturnValueShouldHaveALastLinkElement() {
         SearchAggregated searchAggregated = createSearchAggregated(10); 
+        
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertNotNull(searchResultResource.getLink(Link.REL_LAST));
+        
+        assertThat(searchResultResource.getLink(Link.REL_LAST), notNullValue());
     }
 
     @Test
     public void whenSearchResultHasItemsThenReturnValueShouldHaveItemsElement() {
         SearchAggregated searchAggregated = createSearchAggregated(0);
+        
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertEquals("Items should have 2 items", 2, searchResultResource.getEmbedded().getItems().size());
+        
+        assertThat("Items should have 2 items", searchResultResource.getEmbedded().getItems().size(), is(2));
     }
     
     @Test
     public void whenSearchResultHasAggregation() throws Exception {
         SearchAggregated searchAggregated = createSearchAggregated(0);
+        
         SearchResource searchResultResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertEquals(1, searchResultResource.getEmbedded().getAggregations().size());
+        
+        assertThat(searchResultResource.getEmbedded().getAggregations().size(), is(1));
     }
 
     @Test
@@ -127,24 +145,21 @@ public class SearchResultResourceAssemblerTest {
         String json = "{}";
         id1.setExplain(mapper.convertValue(json, JsonNode.class));
         items.add(id1);
-
         Page<Item> page = new PageImpl<Item>(items, new PageRequest(0, 10) , 10);
         SearchAggregated searchAggregated = new SearchAggregated(page);
-
         searchAggregated.setAggregations(createMockedAggregations());
+        
         SearchResource searchResource = searchResultResourceAssembler.toResource(searchAggregated);
-        assertNotNull("SearchResource should have explain",searchResource.getEmbedded().getItems().get(0).getExplain());
 
+        assertThat("SearchResource should have explain",searchResource.getEmbedded().getItems().get(0).getExplain(), notNullValue());
     }
 
     private SearchAggregated createSearchAggregated(int currentPage) {
         ArrayList<Item> items = new ArrayList<>();
         items.add(createItem("id1"));
         items.add(createItem("id2"));
-        
         Page<Item> page = new PageImpl<Item>(items, new PageRequest(currentPage, 10) , 1000);
         SearchAggregated searchAggregated = new SearchAggregated(page);
-        
         searchAggregated.setAggregations(createMockedAggregations());
         return searchAggregated;
     }
