@@ -26,7 +26,6 @@ public class SearchCriteriaTest {
         
         assertThat(boostMap, allOf(IsMapContaining.hasEntry("name", 10.0f),
                 IsMapContaining.hasEntry("title", 4.0f)));
-        
     }
 
 }
