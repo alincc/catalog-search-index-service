@@ -32,6 +32,11 @@ public class ElasticSearchRepositoryTest {
         embeddedElasticsearch = EmbeddedElasticsearch.getInstance();
     }
 
+    @AfterClass
+    public static void shutdown() throws IOException {
+        embeddedElasticsearch.shutdown();
+    }
+
     @Before
     public void setup () {
         client = embeddedElasticsearch.getClient();
@@ -42,54 +47,61 @@ public class ElasticSearchRepositoryTest {
         searchCriteria.setSearchType(NBSearchType.FULL_TEXT_SEARCH);
     }
 
-    @Test
-    public void searchWithQueryString() {
-        SearchAggregated searchAggregated = searchRepository.search(searchCriteria);
-
-        assertEquals(3, searchAggregated.getPage().getContent().size());
+    @After
+    public void tearDown() throws IOException {
+        client.close();
     }
 
     @Test
-    public void searchWithAggregations() {
+    public void testSimpleSearch() {
+        SearchAggregated result = searchRepository.search(searchCriteria);
+
+        assertThat(result.getPage().getContent().size(), is(3));
+    }
+
+    @Test
+    public void testSearchWithAggregations() {
         searchCriteria.setAggregations(new String[]{"mediatype"});
 
-        SearchAggregated searchAggregated = searchRepository.search(searchCriteria);
+        SearchAggregated result = searchRepository.search(searchCriteria);
 
-        assertNotNull(searchAggregated.getAggregations().get("mediatype"));
+        assertThat(result.getAggregations().get("mediatype"), notNullValue());
     }
 
     @Test
-    public void searchWithFilters() {
-        searchCriteria.setFilters(new String[]{"mediatype:Aviser"});
-        SearchAggregated searchAggregated1 = searchRepository.search(searchCriteria);
-
+    public void testSearchWithSingleFilter() {
         searchCriteria.setFilters(new String[]{"mediatype:Bøker"});
-        SearchAggregated searchAggregated2 = searchRepository.search(searchCriteria);
+        
+        SearchAggregated result = searchRepository.search(searchCriteria);
 
-        searchCriteria.setFilters(new String[]{"mediatype:Bøker", "mediatype:Aviser"});
-        SearchAggregated searchAggregated3 = searchRepository.search(searchCriteria);
-
-        assertEquals("Search 1 should get hits on 0 items", 0, searchAggregated1.getPage().getContent().size());
-        assertEquals("Search 2 should get hits on 3 items", 3, searchAggregated2.getPage().getContent().size());
-        for (Item item : searchAggregated2.getPage().getContent()) {
-            assertTrue("Each item should have mediatype \"Bøker\"", item.getMediaTypes().get(0).equalsIgnoreCase("Bøker"));
+        assertEquals("Should get hits on 3 items", 3, result.getPage().getContent().size());
+        for (Item item : result.getPage().getContent()) {
+            assertThat("Each item should have mediatype \"Bøker\"", item.getMediaTypes().get(0).equalsIgnoreCase("Bøker"), is(true));
         }
-        assertEquals("Search 3 should get hits on 0 items", 0, searchAggregated3.getPage().getContent().size());
     }
 
     @Test
-    public void searchInFreeTextOnly() {
+    public void testSearchWithMultipleFilters() {
+        searchCriteria.setFilters(new String[]{"mediatype:Bøker", "mediatype:Aviser"});
+        
+        SearchAggregated result = searchRepository.search(searchCriteria);
+
+        assertThat("Search 3 should get hits on 0 items", result.getPage().getContent().size(), is(0));
+    }
+
+    @Test
+    public void testSearchInFreeTextOnly() {
         searchCriteria.setSearchString("teater");
         searchCriteria.setSearchType(NBSearchType.TEXT_SEARCH);
 
         SearchAggregated search = searchRepository.search(searchCriteria);
 
         assertThat(search.getPage().getContent(), hasSize(1));
-        assertEquals(search.getPage().getContent().get(0).getId(), "0b8501b8e2b822c8ec13558de82aaef9");
+        assertThat(search.getPage().getContent().get(0).getId(), is("0b8501b8e2b822c8ec13558de82aaef9"));
     }
 
     @Test
-    public void searchInMetadataOnly() {
+    public void testSearchInMetadataOnly() {
         searchCriteria.setSearchString("2009");
         searchCriteria.setSearchType(NBSearchType.FIELD_RESTRICTED_SEARCH);
 
@@ -101,71 +113,74 @@ public class ElasticSearchRepositoryTest {
     }
 
     @Test
-    public void geoSearchNoZoom() {
+    public void testGeoSearchNoZoom() {
         searchCriteria.setGeoSearch(new GeoSearch());
 
-        SearchAggregated search = searchRepository.search(searchCriteria);
+        SearchAggregated result = searchRepository.search(searchCriteria);
 
-        assertThatLocationAggregationHasSize(search, 3);
+        assertThatLocationAggregationHasSize(result, 3);
     }
 
     @Test
-    public void geoSearchWithZoomOnNordlandAndLowPrecision() {
+    public void testGeoSearchWithZoomOnNordlandAndLowPrecision() {
         GeoSearch geoSearch = createGeoSearchWithZoomOnNordland(3);
         searchCriteria.setGeoSearch(geoSearch);
 
-        SearchAggregated search = searchRepository.search(searchCriteria);
+        SearchAggregated result = searchRepository.search(searchCriteria);
 
-        assertThatLocationAggregationHasSize(search, 1);
+        assertThatLocationAggregationHasSize(result, 1);
     }
 
     @Test
-    public void geoSearchWithZoomOnNordlandAndHighPrecision() {
+    public void testGeoSearchWithZoomOnNordlandAndHighPrecision() {
         GeoSearch geoSearch = createGeoSearchWithZoomOnNordland(8);
         searchCriteria.setGeoSearch(geoSearch);
 
-        SearchAggregated search = searchRepository.search(searchCriteria);
+        SearchAggregated result = searchRepository.search(searchCriteria);
 
-        assertThatLocationAggregationHasSize(search, 2);
+        assertThatLocationAggregationHasSize(result, 2);
     }
 
     @Test
-    public void sortAscending() {
+    public void testSearchWithSortAscending() {
         Sort.Order order = new Sort.Order(Sort.Direction.ASC,"title");
         Sort sort = new Sort(order);
         PageRequest pageRequest = new PageRequest(0,10, sort);
         searchCriteria.setPageRequest(pageRequest);
 
-        SearchAggregated search = searchRepository.search(searchCriteria);
-        assertThat(search.getPage().getContent().get(0).getTitle(), is("Nøtteknekkeren"));
+        SearchAggregated result = searchRepository.search(searchCriteria);
+        
+        assertThat(result.getPage().getContent().get(0).getTitle(), is("Nøtteknekkeren"));
     }
 
     @Test
-    public void sortDescending() {
+    public void testSearchWithSortDescending() {
         Sort.Order order = new Sort.Order(Sort.Direction.DESC,"title");
         Sort sort = new Sort(order);
         PageRequest pageRequest = new PageRequest(0,10, sort);
         searchCriteria.setPageRequest(pageRequest);
 
-        SearchAggregated search = searchRepository.search(searchCriteria);
-        assertThat(search.getPage().getContent().get(0).getTitle(), is("Så rart : Inger Hagerup"));
+        SearchAggregated result = searchRepository.search(searchCriteria);
+        
+        assertThat(result.getPage().getContent().get(0).getTitle(), is("Så rart : Inger Hagerup"));
     }
 
     @Test
-    public void searchWithBoost() {
+    public void testSearchWithBoost() {
         searchCriteria.setBoost(new String[]{"title,10", "name,4"});
         
-        SearchAggregated search = searchRepository.search(searchCriteria);
+        SearchAggregated result = searchRepository.search(searchCriteria);
         
-        assertThat(search, notNullValue());
+        assertThat(result, notNullValue());
     }
 
     @Test
-    public void searchWithShould() {
+    public void testSearchWithShould() {
         searchCriteria.setShould(new String[]{"title,peter"});
 
-        SearchAggregated search = searchRepository.search(searchCriteria);
-        assertThat(search, notNullValue());
+        SearchAggregated result = searchRepository.search(searchCriteria);
+        
+        assertThat(result, notNullValue());
     }
 
     private GeoSearch createGeoSearchWithZoomOnNordland(int precision) {
@@ -182,13 +197,4 @@ public class ElasticSearchRepositoryTest {
         assertThat(((GeoHashGrid) locations).getBuckets(), hasSize(numberOfBuckets));
     }
 
-    @After
-    public void tearDown() throws IOException {
-        client.close();
-    }
-
-    @AfterClass
-    public static void shutdown() throws IOException {
-        embeddedElasticsearch.shutdown();
-    }
 }
