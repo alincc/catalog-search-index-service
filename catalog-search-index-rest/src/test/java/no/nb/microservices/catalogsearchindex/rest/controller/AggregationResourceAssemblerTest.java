@@ -1,6 +1,15 @@
 package no.nb.microservices.catalogsearchindex.rest.controller;
 
-import no.nb.microservices.catalogsearchindex.AggregationResource;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -11,14 +20,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import no.nb.microservices.catalogsearchindex.AggregationResource;
 
 public class AggregationResourceAssemblerTest {
 
@@ -44,7 +46,17 @@ public class AggregationResourceAssemblerTest {
 
         AggregationResource resource = assembler.toResource(mockAggregation);
         
-        assertEquals("ddc1", resource.getName());
+        assertThat(resource.getName(), is("ddc1"));
+        assertThat(resource.getFacetValues(), hasSize(1));
+    }
+
+    @Test
+    public void testToResourceWithGeoHashGridAggregation() {
+        GeoHashGrid mockAggregation = createMockedGeoHashGridAggregation();
+
+        AggregationResource resource = assembler.toResource(mockAggregation);
+
+        assertThat(resource.getName(), is("locations"));
         assertThat(resource.getFacetValues(), hasSize(1));
     }
 
@@ -59,16 +71,6 @@ public class AggregationResourceAssemblerTest {
         when(mockAggregation.getName()).thenReturn("ddc1");
         when(mockAggregation.getBuckets()).thenReturn(buckets);
         return mockAggregation;
-    }
-
-    @Test
-    public void testToResourceWithGeoHashGridAggregation() {
-        GeoHashGrid mockAggregation = createMockedGeoHashGridAggregation();
-
-        AggregationResource resource = assembler.toResource(mockAggregation);
-
-        assertEquals("locations", resource.getName());
-        assertThat(resource.getFacetValues(), hasSize(1));
     }
 
     private GeoHashGrid createMockedGeoHashGridAggregation() {
