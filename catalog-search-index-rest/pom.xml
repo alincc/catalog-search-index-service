@@ -35,7 +35,7 @@
         <dependency>
             <groupId>no.nb.metrics</groupId>
             <artifactId>metrics-annotations</artifactId>
-            <version>0.0.1-2</version>
+            <version>0.0.1-3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

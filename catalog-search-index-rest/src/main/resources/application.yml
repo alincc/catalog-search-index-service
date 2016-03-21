@@ -1,7 +1,12 @@
 info:
     app:
-      name: catalog-search-index-service
-      description: Catalog Search Index Service
+        name: catalog-search-index-service
+        description: Catalog Search Index Service
+    build:
+        artifact: ${project.artifactId}
+        name: ${project.name}
+        description: ${project.description}
+        version: ${project.version}
 
 server:
     port: 8006
@@ -17,5 +22,5 @@ monitoring:
   
 
 catalog:
-  esHosts:
-    - localhost
+    esHosts:
+      - localhost
