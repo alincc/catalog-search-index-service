@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import no.nb.microservices.catalogsearchindex.core.index.service.SearchServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,7 +23,7 @@ import org.springframework.data.domain.Pageable;
 import no.nb.microservices.catalogsearchindex.core.model.Item;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
-import no.nb.microservices.catalogsearchindex.core.repository.SearchRepository;
+import no.nb.microservices.catalogsearchindex.core.index.repository.SearchRepository;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SearchServiceImplTest {

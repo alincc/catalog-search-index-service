@@ -1,4 +1,4 @@
-package no.nb.microservices.catalogsearchindex.core.services;
+package no.nb.microservices.catalogsearchindex.core.index.service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import no.nb.microservices.catalogsearchindex.core.metadata.repository.MetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,11 +17,10 @@ import org.springframework.stereotype.Service;
 import no.nb.microservices.catalogsearchindex.core.model.Item;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
-import no.nb.microservices.catalogsearchindex.core.repository.SearchRepository;
+import no.nb.microservices.catalogsearchindex.core.index.repository.SearchRepository;
 
 @Service
 public class SearchServiceImpl implements ISearchService {
-
     private final SearchRepository searchRepository;
 
     @Autowired

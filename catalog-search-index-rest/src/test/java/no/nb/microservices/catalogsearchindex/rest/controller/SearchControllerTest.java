@@ -9,6 +9,9 @@ import static org.mockito.Matchers.anyString;
 import java.util.ArrayList;
 import java.util.List;
 
+import no.nb.microservices.catalogsearchindex.core.content.service.IContentService;
+import no.nb.microservices.catalogsearchindex.core.model.ContentFragment;
+import no.nb.microservices.catalogsearchindex.core.model.ContentSearch;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +30,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import no.nb.microservices.catalogsearchindex.core.model.Item;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
-import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
+import no.nb.microservices.catalogsearchindex.core.index.service.ISearchService;
 import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -35,6 +38,9 @@ public class SearchControllerTest {
 
     @Mock
     private ISearchService searchService;
+
+    @Mock
+    private IContentService contentService;
 
     @InjectMocks
     private SearchController controller;
@@ -54,26 +60,24 @@ public class SearchControllerTest {
     @Test
     public void testSearchWithin() {
         given(searchService.contentSearch(anyString(), anyString(), anyObject()))
-                .willReturn(searchWithin());
+                .willReturn(new SearchAggregated(null, null));
+
+        given(contentService.getContent(anyObject()))
+                .willReturn(contentSearch());
 
         ResponseEntity<ContentSearchResource> searchWithin = controller
                 .contentSearch("id", "q", getPageable());
 
         assertThat("Should hava a self reference", searchWithin.getBody().getId().getHref(), is("http://localhost/catalog/v1/id/search?q=q"));
-        assertThat("Should have fragments", searchWithin.getBody().getFragments().size(), is(2));
-        assertThat("Should have freetext metadata", searchWithin.getBody().getFreetextMetadatas().size(), is(1));
+        assertThat("Should have fragments", searchWithin.getBody().getFragments().size(), is(1));
     }
 
-    private SearchAggregated searchWithin() {
-        List<Item> items = new ArrayList<>();
-        Item item = new Item();
-        item.addFreetextFragment("K?RE#414P4F110w");
-        item.addFreetextFragment("PUBLIKUM#415?4F1?0x");
-        item.addFreetextMetadata("DIV1#1000g7m?");
-        items.add(item);
-        Pageable pageable = getPageable();
-        Page page = new PageImpl<>(items, pageable, 1);
-        return new SearchAggregated(page);
+    private ContentSearch contentSearch() {
+        ContentSearch contentSearch = new ContentSearch();
+        List<ContentFragment> fragments = new ArrayList<>();
+        fragments.add(new ContentFragment(1766,2647,226,45,"URN:NBN:no-nb_digibok_2014070158006_C3","TEATER","",""));
+        contentSearch.setFragments(fragments);
+        return contentSearch;
     }
 
     private Pageable getPageable() {

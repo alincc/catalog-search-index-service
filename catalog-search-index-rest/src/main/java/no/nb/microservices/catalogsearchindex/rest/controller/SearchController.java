@@ -1,5 +1,7 @@
 package no.nb.microservices.catalogsearchindex.rest.controller;
 
+import no.nb.microservices.catalogsearchindex.core.content.service.IContentService;
+import no.nb.microservices.catalogsearchindex.core.model.ContentSearch;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
@@ -20,7 +22,7 @@ import no.nb.microservices.catalogsearchindex.NBSearchType;
 import no.nb.microservices.catalogsearchindex.SearchResource;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;
-import no.nb.microservices.catalogsearchindex.core.services.ISearchService;
+import no.nb.microservices.catalogsearchindex.core.index.service.ISearchService;
 import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
 
 @RestController
@@ -28,10 +30,12 @@ import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource
 public class SearchController {
 
     private final ISearchService searchService;
+    private final IContentService contentService;
 
     @Autowired
-    public SearchController(final ISearchService searchService) {
+    public SearchController(final ISearchService searchService, IContentService contentService) {
         this.searchService = searchService;
+        this.contentService = contentService;
     }
     
     @InitBinder
@@ -87,8 +91,9 @@ public class SearchController {
             @RequestParam(value = "q") String q,
             @PageableDefault Pageable pageRequest) {
         SearchAggregated result = searchService.contentSearch(id, q, pageRequest);
+        ContentSearch content = contentService.getContent(result);
         ContentSearchResource resource = new ContentSearchResourceAssembler()
-                .toResource(result);
+                .toResource(content);
         return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 }

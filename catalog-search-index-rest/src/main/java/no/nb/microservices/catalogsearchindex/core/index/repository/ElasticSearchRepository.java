@@ -1,4 +1,4 @@
-package no.nb.microservices.catalogsearchindex.core.repository;
+package no.nb.microservices.catalogsearchindex.core.index.repository;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -168,7 +168,7 @@ public class ElasticSearchRepository implements SearchRepository {
                 .query(queryBuilder);
 
         searchBuilder = searchBuilder.highlight(SearchSourceBuilder.highlight()
-                .field("freetext", 200, 10000, 0).preTags("")
+                .field("freetext", 1, 10000, 0).preTags("")
                 .postTags(""));
 
         searchBuilder = searchBuilder.field("freetext_metadata");

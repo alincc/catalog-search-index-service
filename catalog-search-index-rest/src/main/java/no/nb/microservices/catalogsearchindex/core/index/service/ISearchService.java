@@ -1,4 +1,4 @@
-package no.nb.microservices.catalogsearchindex.core.services;
+package no.nb.microservices.catalogsearchindex.core.index.service;
 
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.core.model.SearchCriteria;

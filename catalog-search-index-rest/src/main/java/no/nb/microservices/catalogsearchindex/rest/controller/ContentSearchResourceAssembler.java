@@ -1,8 +1,13 @@
 package no.nb.microservices.catalogsearchindex.rest.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import no.nb.microservices.catalogsearchindex.core.model.ContentFragment;
+import no.nb.microservices.catalogsearchindex.core.model.ContentSearch;
+import no.nb.microservices.catalogsearchindex.searchwithin.Fragment;
+import no.nb.microservices.catalogsearchindex.searchwithin.Position;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +24,7 @@ import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
 import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
 
 
-public class ContentSearchResourceAssembler extends ResourceAssemblerSupport<SearchAggregated, ContentSearchResource> {
+public class ContentSearchResourceAssembler extends ResourceAssemblerSupport<ContentSearch, ContentSearchResource> {
     private final HateoasPageableHandlerMethodArgumentResolver pageableResolver = new HateoasPageableHandlerMethodArgumentResolver();
     
     public ContentSearchResourceAssembler() {
@@ -27,73 +32,24 @@ public class ContentSearchResourceAssembler extends ResourceAssemblerSupport<Sea
     }
     
     @Override
-    public ContentSearchResource toResource(SearchAggregated result) {
-        ContentSearchResource resource = new ContentSearchResource(asPageMetadata(result.getPage()));
-
-        getFreetextFragments(result)
-                .forEach(resource::addFragment);
-
-        getFreetextMetadata(result)
-                .forEach(resource::addFreetextMetdatas);
-
-        return addPaginationLinks(resource, result.getPage());
-    }
-
-    private static <T> PageMetadata asPageMetadata(Page<T> page) {
-        return new PageMetadata(page.getSize(), page.getNumber(), page.getTotalElements(), page.getTotalPages());
-    }
-
-    private List<String> getFreetextFragments(SearchAggregated search) {
-        List<Item> items = search.getPage().getContent();
-        if (items != null && items.size() == 1) {
-            return items.get(0).getFreetextHits();
-        } else {
-            return Collections.emptyList();
+    public ContentSearchResource toResource(ContentSearch contentSearch) {
+        ContentSearchResource resource = new ContentSearchResource();
+        List<Fragment> fragments = new ArrayList<>();
+        for (ContentFragment contentFragment : contentSearch.getFragments()) {
+            Position position = new Position(contentFragment.getX(),contentFragment.getY(), contentFragment.getW(), contentFragment.getH());
+            Fragment fragment = new Fragment(contentFragment.getText(), contentFragment.getBefore(), contentFragment.getAfter(), contentFragment.getPageid(), position);
+            fragments.add(fragment);
         }
+        resource.setFragments(fragments);
+
+        resource.add(createSelfLink());
+
+        return resource;
     }
 
-    private List<String> getFreetextMetadata(SearchAggregated search) {
-        List<Item> items = search.getPage().getContent();
-        if (items != null && items.size() == 1) {
-            return items.get(0).getFreetextMetadatas();
-        } else {
-            return Collections.emptyList();
-        }
-    }
-    
-    private ContentSearchResource addPaginationLinks(ContentSearchResource resources, Page<?> page) {
-
+    private Link createSelfLink() {
         UriTemplate base = new UriTemplate(ServletUriComponentsBuilder.fromCurrentRequest().build().toString());
-
-        if (page.hasPrevious()) {
-            resources.add(createLink(base, new PageRequest(0, page.getSize(), page.getSort()), Link.REL_FIRST));
-        }
-
-        if (page.hasPrevious()) {
-            resources.add(createLink(base, page.previousPageable(), Link.REL_PREVIOUS));
-        }
-
-        resources.add(createLink(base, null, Link.REL_SELF));
-
-        if (page.hasNext()) {
-            resources.add(createLink(base, page.nextPageable(), Link.REL_NEXT));
-        }
-
-        if (page.hasNext()) {
-
-            int lastIndex = page.getTotalPages() == 0 ? 0 : page.getTotalPages() - 1;
-
-            resources.add(createLink(base, new PageRequest(lastIndex, page.getSize(), page.getSort()), Link.REL_LAST));
-        }
-
-        return resources;
-    }
-    
-    private Link createLink(UriTemplate base, Pageable pageable, String rel) {
-
         UriComponentsBuilder builder = UriComponentsBuilder.fromUri(base.expand());
-        pageableResolver.enhance(builder, null, pageable);
-
-        return new Link(new UriTemplate(builder.build().toString()), rel);
+        return new Link(new UriTemplate(builder.build().toString()), Link.REL_SELF);
     }
 }

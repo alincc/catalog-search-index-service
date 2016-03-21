@@ -1,4 +1,4 @@
-package no.nb.microservices.catalogsearchindex.core.repository;
+package no.nb.microservices.catalogsearchindex.core.index.repository;
 
 import org.springframework.data.domain.Pageable;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;

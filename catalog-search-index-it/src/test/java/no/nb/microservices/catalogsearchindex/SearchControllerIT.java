@@ -1,9 +1,20 @@
 package no.nb.microservices.catalogsearchindex;
 
+import com.netflix.loadbalancer.BaseLoadBalancer;
+import com.netflix.loadbalancer.ILoadBalancer;
+import com.netflix.loadbalancer.Server;
+import com.squareup.okhttp.mockwebserver.Dispatcher;
+import com.squareup.okhttp.mockwebserver.MockResponse;
+import com.squareup.okhttp.mockwebserver.MockWebServer;
+import com.squareup.okhttp.mockwebserver.RecordedRequest;
 import no.nb.microservices.catalogsearchindex.config.ElasticSearchTestConfig;
+import no.nb.microservices.catalogsearchindex.config.RibbonClientConfiguration;
 import no.nb.microservices.catalogsearchindex.searchwithin.ContentSearchResource;
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.TestRestTemplate;
@@ -11,17 +22,43 @@ import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {TestApplication.class, ElasticSearchTestConfig.class})
+@SpringApplicationConfiguration(classes = {TestApplication.class, ElasticSearchTestConfig.class, RibbonClientConfiguration.class})
 @WebIntegrationTest("server.port: 0")
 public class SearchControllerIT {
 
 	@Value("${local.server.port}")
-	int port;	
+	int port;
+
+    @Autowired
+    ILoadBalancer lb;
+
+    @Before
+	public void setup() throws Exception {
+        MockWebServer server = new MockWebServer();
+        String structMock = IOUtils.toString(this.getClass().getResourceAsStream("struct.xml"));
+
+        final Dispatcher dispatcher = new Dispatcher() {
+            @Override
+            public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
+                if (recordedRequest.getPath().startsWith("/catalog/v1/metadata/0b8501b8e2b822c8ec13558de82aaef9/struct")) {
+                    return new MockResponse().setBody(structMock).setResponseCode(200).setHeader("Content-Type", "application/xml;charset=UTF-8");
+                }
+                return new MockResponse().setResponseCode(404);
+            }
+        };
+        server.setDispatcher(dispatcher);
+        server.start();
+
+        BaseLoadBalancer blb = (BaseLoadBalancer) lb;
+        blb.setServersList(Arrays.asList(new Server(server.getHostName(), server.getPort())));
+    }
 
 	@Test
 	public void testSimpleSearch() throws Exception {
@@ -72,7 +109,6 @@ public class SearchControllerIT {
 
         ContentSearchResource searchResource = entity.getBody();
 
-        assertThat("Should have freetext metadada", searchResource.getFreetextMetadatas(), hasSize(1));
         assertThat("Should have fragments",searchResource.getFragments(), hasSize(1));
     }
 

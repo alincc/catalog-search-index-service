@@ -1,6 +1,8 @@
 package no.nb.microservices.catalogsearchindex.core.repository;
 
 import no.nb.microservices.catalogsearchindex.NBSearchType;
+import no.nb.microservices.catalogsearchindex.core.index.repository.ElasticSearchRepository;
+import no.nb.microservices.catalogsearchindex.core.index.repository.SearchRepository;
 import no.nb.microservices.catalogsearchindex.core.model.GeoSearch;
 import no.nb.microservices.catalogsearchindex.core.model.Item;
 import no.nb.microservices.catalogsearchindex.core.model.SearchAggregated;
