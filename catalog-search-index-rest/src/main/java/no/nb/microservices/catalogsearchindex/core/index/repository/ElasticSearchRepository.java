@@ -16,10 +16,13 @@ import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.highlight.HighlightField;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -33,6 +36,7 @@ import java.util.stream.Collectors;
 @Repository
 public class ElasticSearchRepository implements SearchRepository {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchRepository.class);
     private static final String SCHEMA_NAME = "expressionrecords";
     private static final String TYPE_NAME = "expressionrecord";
     private final Client client;
@@ -260,7 +264,10 @@ public class ElasticSearchRepository implements SearchRepository {
         String[] aggregations = searchCriteria.getAggregations();
         if(aggregations != null) {
             for (String aggregation : aggregations) {
-                searchRequestBuilder.addAggregation(AggregationBuilders.terms(aggregation).field(aggregation));
+                TermsBuilder aggregationBuilder = getAggregationBuilder(aggregation);
+                if(aggregationBuilder != null) {
+                    searchRequestBuilder.addAggregation(aggregationBuilder);
+                }
             }
         }
     }
@@ -349,4 +356,19 @@ public class ElasticSearchRepository implements SearchRepository {
         return metadatas;
     }
 
+    private TermsBuilder getAggregationBuilder(String aggregation) {
+        try {
+            int size = 10;
+            if (aggregation.contains(":")) {
+                String[] split = aggregation.split(":");
+                size = Integer.parseInt(split[1]);
+                aggregation = split[0];
+            }
+            return AggregationBuilders.terms(aggregation).field(aggregation).size(size);
+        } catch (Exception e) {
+            LOG.error("Can't add aggregation: {}", aggregation);
+            LOG.debug("Can't add aggregation: {}", aggregation, e);
+        }
+        return null;
+    }
 }
