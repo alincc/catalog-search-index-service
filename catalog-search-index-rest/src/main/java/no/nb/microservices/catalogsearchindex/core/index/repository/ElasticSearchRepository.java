@@ -41,6 +41,26 @@ public class ElasticSearchRepository implements SearchRepository {
     private static final String TYPE_NAME = "expressionrecord";
     private final Client client;
 
+    private String[] FIELDS_WITH_UNTOUCHED = {
+            "collection",
+            "keydate",
+            "nameactor",
+            "nameauthor",
+            "namecomposer",
+            "namecreator",
+            "namecreators",
+            "namehost",
+            "nameproducer",
+            "publisher",
+            "series",
+            "subjectgenre",
+            "subjectgeographic",
+            "subjectname",
+            "subjecttitle",
+            "subjecttopic",
+            "title",
+    };
+
     @Autowired
     public ElasticSearchRepository(Client client) {
         this.client = client;
@@ -195,6 +215,7 @@ public class ElasticSearchRepository implements SearchRepository {
 
     private QueryStringQueryBuilder getQueryStringQueryBuilder(SearchCriteria searchCriteria) {
         QueryStringQueryBuilder query = new QueryStringQueryBuilder(searchCriteria.getSearchString());
+        query.defaultOperator(QueryStringQueryBuilder.Operator.AND);
 
         if(searchCriteria.getSearchType() == NBSearchType.FIELD_RESTRICTED_SEARCH) {
             query.field("title", 6);
@@ -232,7 +253,15 @@ public class ElasticSearchRepository implements SearchRepository {
         if (searchCriteria.getFilters() != null && searchCriteria.getFilters().length > 0) {
             for (String filter : searchCriteria.getFilters()) {
                 String[] values = filter.split(":");
-                filters.add(FilterBuilders.termFilter(values[0].toLowerCase(), values[1].toLowerCase()));
+                String field = values[0].toLowerCase();
+
+                if(hasUntouched(field)) {
+                    field = field + ".untouched";
+                    filters.add(FilterBuilders.termFilter(field, values[1]));
+                } else {
+                    filters.add(FilterBuilders.termFilter(field, values[1].toLowerCase()));
+                }
+
             }
         }
 
@@ -240,6 +269,15 @@ public class ElasticSearchRepository implements SearchRepository {
             filterBuilder = FilterBuilders.boolFilter().must(filters.toArray(new FilterBuilder[filters.size()]));
         }
         return filterBuilder;
+    }
+
+    private boolean hasUntouched(String field) {
+        for(String f : FIELDS_WITH_UNTOUCHED) {
+            if(f.equals(field)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void searchFields(BoolFilterBuilder filterBuilder, SearchRequestBuilder searchRequestBuilder, BoolQueryBuilder boolQueryBuilder) {
@@ -364,7 +402,11 @@ public class ElasticSearchRepository implements SearchRepository {
                 size = Integer.parseInt(split[1]);
                 aggregation = split[0];
             }
-            return AggregationBuilders.terms(aggregation).field(aggregation).size(size);
+            if(hasUntouched(aggregation)) {
+                return AggregationBuilders.terms(aggregation).field(aggregation + ".untouched").size(size);
+            } else {
+                return AggregationBuilders.terms(aggregation).field(aggregation).size(size);
+            }
         } catch (Exception e) {
             LOG.error("Can't add aggregation: {}", aggregation);
             LOG.debug("Can't add aggregation: {}", aggregation, e);

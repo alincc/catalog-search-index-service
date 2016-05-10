@@ -11,6 +11,8 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregator;
 import org.junit.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -183,6 +185,25 @@ public class ElasticSearchRepositoryTest {
         SearchAggregated result = searchRepository.search(searchCriteria);
         
         assertThat(result, notNullValue());
+    }
+
+    @Test
+    public void whenFilteringOnTitleThenFilterOnTitleUntouched() throws Exception {
+        searchCriteria.setFilters(new String[]{"title:Peter Pan for barn ; Peter Pan for vaksne"});
+
+        SearchAggregated result = searchRepository.search(searchCriteria);
+
+        assertThat(result.getPage().getTotalElements(), is(1L));
+    }
+
+    @Test
+    public void whenAggOnTitleThenAggOnTitleUntouched() throws Exception {
+        searchCriteria.setAggregations(new String[]{"title"});
+
+        SearchAggregated result = searchRepository.search(searchCriteria);
+
+        assertThat(result.getAggregations().asMap().get("title").getName(), is("title"));
+        assertThat(((Terms)result.getAggregations().asMap().get("title")).getBuckets().size(), is(3));
     }
 
     private GeoSearch createGeoSearchWithZoomOnNordland(int precision) {

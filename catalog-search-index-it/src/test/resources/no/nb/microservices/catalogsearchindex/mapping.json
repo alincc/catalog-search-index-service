@@ -1,72 +1,388 @@
-{"expressionrecord":{
-        "date_formats":["dateOptionalTime","yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"],
-        "_source":{"enabled":true},
-        "_all" : {"enabled":true, "store":"no", "term_vector":"no"},
-        "properties":{
-            "title_uniform":{"type":"string"},
-            "title_alternative":{"type":"string"},
-            "ddc":{"type":"string", "index":"not_analyzed", "boost":2.0},
-            "ddc1":{"type":"string", "index":"not_analyzed"},
-            "ddc2":{"type":"string", "index":"not_analyzed"},
-            "ddc3":{"type":"string", "index":"not_analyzed"},
-            "otherid":{"type":"string"},
-            "otheridsort" : {"type":"string", "index":"not_analyzed"},
-            "hostid":{"type":"string"},
-            "subject":{"type":"string"},
-            "titlesort":{"type":"string", "analyzer":"collation"},
-            "themes":{"type":"string"},
-            "datecreated":{"type":"string"},
-            "keydate":{"type" : "multi_field", "fields" : {"keydate" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "digital":{"type":"string"},
-            "oaiid":{"type":"string", "index":"not_analyzed", "boost":2.0, "store":"yes"},
-            "creator":{"type":"string", "store":"yes"},
-            "publisher":{"type":"string"},
-            "languages":{"type":"string"},
-            "title":{"type":"string"},
-            "subjecttemporal":{"type":"string"},
-            "sesamid":{"type":"string", "index":"not_analyzed"},
-            "description":{"type":"string"},
-            "dateissued":{"type":"string"},
-            "title_abbreviated":{"type":"string"},
-            "isbn":{"type":"string", "analyzer":"numeric_id"},
-            "ismn":{"type":"string", "analyzer":"numeric_id"},            
-            "name":{"type":"string"},
-            "year":{"type":"integer"},
-            "recordSource":{"type":"string", "index":"not_analyzed", "store":"yes"},
-            "hosttitle":{"type":"string"},
-            "deduplicationSourceCount":{"type":"integer"},
-            "lastModified":{"format":"dateOptionalTime", "type":"date"},
-            "status":{"type":"string", "index":"not_analyzed"},
-            "utcdatetime":{"type":"string"},
-            "nameauthor":{"type" : "multi_field", "fields" : {"nameauthor" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "places":{"type":"string"},
-            "subjectgenre":{"type":"string"},
-            "metadataClasses":{"type":"string"},
-            "urn":{"type":"string", "index":"not_analyzed", "boost":2.0, "store":"yes"},
-            "firstIndexTime":{"format":"dateOptionalTime", "type":"date"},
-            "topics":{"type":"string"},
-            "contentClasses":{"type":"string"},
-            "namecreator":{"type" : "multi_field", "fields" : {"namecreator" : {"type":"string", "analyzer":"collation"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "namecreators":{"type" : "multi_field", "fields" : {"namecreators" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "month":{"type":"integer"},
-            "subjectname":{"type" : "multi_field", "fields" : {"subjectname" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "subjecttopic":{"type":"string"},
-            "subjectgeographic":{"type":"string"},
-            "day":{"type":"integer"},
-            "namecomposer":{"type" : "multi_field", "fields" : {"namecomposer" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "namehost":{"type" : "multi_field", "fields" : {"namehost" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "nameactor":{"type" : "multi_field", "fields" : {"nameactor" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "nameproducer":{"type" : "multi_field", "fields" : {"nameproducer" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "subjecttitle":{"type":"string"},
-            "mediatype":{"type":"string"},
-            "series":{"type" : "multi_field", "fields" : {"series" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "collection":{"type" : "multi_field", "fields" : {"collection" : {"type":"string"}, "untouched" : {"type":"string", "index":"not_analyzed"}}},
-            "freetext":{"type":"string", "index_analyzer":"freetext_index", "search_analyzer":"freetext_search", "store":"yes", "term_vector":"with_positions_offsets"},
-            "freetext_metadata":{"type":"string", "store":"yes", "index":"no"},
-            "dra_base":{"type":"string"},
-            "channel":{"type":"string"},            
-            "extent":{"type":"integer"},
-            "location":{"type":"geo_point"}
+{
+    "expressionrecord": {
+        "dynamic_date_formats": [
+            "dateOptionalTime",
+            "yyyy/MM/dd HH:mm:ss||yyyy/MM/dd"
+        ],
+        "_source": {
+            "enabled": false
+        },
+        "_all": {
+            "enabled": true,
+            "store": "no"
+        },
+        "properties": {
+            "bibliography": {
+                "type": "string",
+                "store": "yes"
+            },
+            "channel": {
+                "type": "string"
+            },
+            "collection": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "contentClasses": {
+                "type": "string",
+                "store": "yes"
+            },
+            "contentClassesLastModified": {
+                "type": "date",
+                "store": "yes",
+                "format": "dateOptionalTime"
+            },
+            "creator": {
+                "type": "string",
+                "store": "yes"
+            },
+            "datecreated": {
+                "type": "string"
+            },
+            "dateissued": {
+                "type": "string",
+                "store": "yes"
+            },
+            "day": {
+                "type": "integer"
+            },
+            "ddc": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "ddc1": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "ddc2": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "ddc3": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "deduplicationSourceCount": {
+                "type": "integer"
+            },
+            "description": {
+                "type": "string"
+            },
+            "digital": {
+                "type": "string",
+                "store": "yes"
+            },
+            "dra_base": {
+                "type": "string"
+            },
+            "extent": {
+                "type": "integer"
+            },
+            "firstDigitalContentTime": {
+                "type": "date",
+                "store": "yes",
+                "format": "dateOptionalTime"
+            },
+            "firstIndexTime": {
+                "type": "date",
+                "store": "yes",
+                "format": "dateOptionalTime"
+            },
+            "freetext": {
+                "type": "string",
+                "store": "yes",
+                "term_vector": "with_positions_offsets",
+                "index_analyzer": "freetext_index",
+                "search_analyzer": "freetext_search"
+            },
+            "freetext_metadata": {
+                "type": "string",
+                "index": "no",
+                "store": "yes"
+            },
+            "hostid": {
+                "type": "string"
+            },
+            "hosttitle": {
+                "type": "string"
+            },
+            "inputcontentclasses": {
+                "type": "string"
+            },
+            "isbn": {
+                "type": "string",
+                "analyzer": "numeric_id"
+            },
+            "ismn": {
+                "type": "string",
+                "analyzer": "numeric_id"
+            },
+            "itemCount": {
+                "type": "string"
+            },
+            "keydate": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "languages": {
+                "type": "string"
+            },
+            "lastModified": {
+                "type": "date",
+                "format": "dateOptionalTime"
+            },
+            "mediatype": {
+                "type": "string",
+                "store": "yes"
+            },
+            "metadataClasses": {
+                "type": "string",
+                "store": "yes"
+            },
+            "month": {
+                "type": "integer"
+            },
+            "name": {
+                "type": "string"
+            },
+            "nameactor": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "nameauthor": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "namecomposer": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "namecreator": {
+                "type": "string",
+                "analyzer": "collation",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "namecreators": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "namehost": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "nameproducer": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "note": {
+                "type": "string"
+            },
+            "oaiid": {
+                "type": "string",
+                "index": "not_analyzed",
+                "store": "yes"
+            },
+            "oldsesamid": {
+                "type": "string",
+                "index": "not_analyzed",
+                "store": "yes"
+            },
+            "otherformat": {
+                "type": "string"
+            },
+            "otherid": {
+                "type": "string"
+            },
+            "otheridsort": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "places": {
+                "type": "string"
+            },
+            "publisher": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "recordSource": {
+                "type": "string",
+                "index": "not_analyzed",
+                "store": "yes"
+            },
+            "series": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "sesamid": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "set": {
+                "type": "string"
+            },
+            "status": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "subject": {
+                "type": "string"
+            },
+            "subjectgenre": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "subjectgeographic": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "subjectname": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "subjecttemporal": {
+                "type": "string"
+            },
+            "subjecttitle": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "subjecttopic": {
+                "type": "string",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "themes": {
+                "type": "string"
+            },
+            "title": {
+                "type": "string",
+                "store": "yes",
+                "fields": {
+                    "untouched": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    }
+                }
+            },
+            "title_abbreviated": {
+                "type": "string"
+            },
+            "title_alternative": {
+                "type": "string"
+            },
+            "title_uniform": {
+                "type": "string"
+            },
+            "titlesort": {
+                "type": "string",
+                "analyzer": "collation"
+            },
+            "topics": {
+                "type": "string"
+            },
+            "urn": {
+                "type": "string",
+                "index": "not_analyzed",
+                "store": "yes"
+            },
+            "utcdatetime": {
+                "type": "string"
+            },
+            "year": {
+                "type": "integer"
+            },
+            "location": {
+                "type": "geo_point",
+                "store": "yes"
+            },
+            "pageCount": {
+                "type": "integer",
+                "store": "yes"
+            },
+            "thumbnailurn": {
+                "type": "string",
+                "index": "not_analyzed",
+                "store": "yes"
+            }
         }
     }
 }
