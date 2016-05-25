@@ -255,20 +255,40 @@ public class ElasticSearchRepository implements SearchRepository {
                 String[] values = filter.split(":");
                 String field = values[0].toLowerCase();
 
-                if(hasUntouched(field)) {
-                    field = field + ".untouched";
-                    filters.add(FilterBuilders.termFilter(field, values[1]));
+                if (isDateRange(field, values)) {
+                    filters.add(getDateRangeFilter("dateissued", values[1]));
                 } else {
-                    filters.add(FilterBuilders.termFilter(field, values[1].toLowerCase()));
+                    if(hasUntouched(field)) {
+                        field = field + ".untouched";
+                        filters.add(FilterBuilders.termFilter(field, values[1]));
+                    } else {
+                        filters.add(FilterBuilders.termFilter(field, values[1].toLowerCase()));
+                    }
                 }
-
             }
         }
 
         if (filters.size() > 0) {
             filterBuilder = FilterBuilders.boolFilter().must(filters.toArray(new FilterBuilder[filters.size()]));
         }
+
         return filterBuilder;
+    }
+
+    private boolean isDateRange(String field, String[] values) {
+        return ("date".equalsIgnoreCase(field) && values[1].startsWith("[") && values[1].endsWith("]"));
+    }
+
+    private RangeFilterBuilder getDateRangeFilter(String field, String range) {
+        if (field != null && range != null) {
+            String[] rangeValues = range.replace("[", "").replace("]", "").split("TO");
+            String fromDate = rangeValues[0].trim();
+            String toDate = rangeValues[1].trim();
+
+            return FilterBuilders.rangeFilter(field).from(fromDate).to(toDate);
+        }
+
+        return null;
     }
 
     private boolean hasUntouched(String field) {

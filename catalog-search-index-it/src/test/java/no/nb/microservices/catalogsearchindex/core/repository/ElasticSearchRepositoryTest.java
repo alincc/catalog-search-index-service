@@ -12,16 +12,13 @@ import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.bucket.geogrid.GeoHashGrid;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregator;
 import org.junit.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.io.IOException;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public class ElasticSearchRepositoryTest {
@@ -91,6 +88,14 @@ public class ElasticSearchRepositoryTest {
         SearchAggregated result = searchRepository.search(searchCriteria);
 
         assertThat("Search 3 should get hits on 0 items", result.getPage().getContent().size(), is(0));
+    }
+
+    @Test
+    public void testSearchWithDateRangeFilter() {
+        searchCriteria.setFilters(new String[]{"date:[2005 TO 2010]"});
+        SearchAggregated result = searchRepository.search(searchCriteria);
+
+        assertThat("Search should get hits on 2 items", result.getPage().getContent().size(), is(2));
     }
 
     @Test
