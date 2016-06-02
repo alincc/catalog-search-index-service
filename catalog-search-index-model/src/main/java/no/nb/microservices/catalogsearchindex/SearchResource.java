@@ -22,9 +22,10 @@ public class SearchResource extends ResourceSupport {
     public SearchResource() {
     }
 
-    public SearchResource(PageMetadata metadata) {
+    public SearchResource(PageMetadata metadata, EmbeddedWrapper embeddedWrapper) {
         super();
         this.metadata = metadata;
+        this.wrapper = embeddedWrapper;
     }
 
     public PageMetadata getMetadata() {

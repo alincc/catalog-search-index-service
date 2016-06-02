@@ -5,7 +5,15 @@ import java.util.List;
 
 public class EmbeddedWrapper {
     private List<ItemResource> items = new ArrayList<>();
-    private List<AggregationResource> aggregations = new ArrayList<>();
+    private List<SimpleAggregation> aggregations = new ArrayList<>();
+
+    public EmbeddedWrapper() {
+    }
+
+    public EmbeddedWrapper(List<ItemResource> items, List<SimpleAggregation> aggregations) {
+        this.items = items;
+        this.aggregations = aggregations;
+    }
 
     public List<ItemResource> getItems() {
         return items;
@@ -15,11 +23,11 @@ public class EmbeddedWrapper {
         this.items = items;
     }
 
-    public List<AggregationResource> getAggregations() {
+    public List<SimpleAggregation> getAggregations() {
         return aggregations;
     }
 
-    public void setAggregations(List<AggregationResource> aggregations) {
+    public void setAggregations(List<SimpleAggregation> aggregations) {
         this.aggregations = aggregations;
     }
 }
